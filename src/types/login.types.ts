@@ -1,4 +1,3 @@
-import type { User, Session } from "@supabase/supabase-js";
 
 export interface loginData {
     email: string;
@@ -10,8 +9,4 @@ export interface registerData {
     password: string;
     passwordConfirmation: string;
 }
-export interface authData {
-    user: User | null;
-    session: Session | null;
-    loading: boolean;
-}
+

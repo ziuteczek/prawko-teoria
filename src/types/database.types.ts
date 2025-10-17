@@ -53,7 +53,7 @@ export type Database = {
           },
         ]
       }
-      category: {
+      categories: {
         Row: {
           id: number
           title: string
@@ -111,7 +111,7 @@ export type Database = {
             foreignKeyName: "question_type_type_id_fkey"
             columns: ["type_id"]
             isOneToOne: false
-            referencedRelation: "type"
+            referencedRelation: "types"
             referencedColumns: ["id"]
           },
         ]
@@ -121,6 +121,7 @@ export type Database = {
           answer_a: string | null
           answer_b: string | null
           answer_c: string | null
+          category_id: number
           content: string
           correct_answer: string
           de_answer_a: string | null
@@ -133,7 +134,7 @@ export type Database = {
           eng_question: string | null
           explanation: string | null
           id: number
-          question_type_id: number
+          media: string | null
           ua_answer_a: string | null
           ua_answer_b: string | null
           ua_answer_c: string | null
@@ -143,6 +144,7 @@ export type Database = {
           answer_a?: string | null
           answer_b?: string | null
           answer_c?: string | null
+          category_id: number
           content: string
           correct_answer: string
           de_answer_a?: string | null
@@ -155,7 +157,7 @@ export type Database = {
           eng_question?: string | null
           explanation?: string | null
           id?: number
-          question_type_id: number
+          media?: string | null
           ua_answer_a?: string | null
           ua_answer_b?: string | null
           ua_answer_c?: string | null
@@ -165,6 +167,7 @@ export type Database = {
           answer_a?: string | null
           answer_b?: string | null
           answer_c?: string | null
+          category_id?: number
           content?: string
           correct_answer?: string
           de_answer_a?: string | null
@@ -177,7 +180,7 @@ export type Database = {
           eng_question?: string | null
           explanation?: string | null
           id?: number
-          question_type_id?: number
+          media?: string | null
           ua_answer_a?: string | null
           ua_answer_b?: string | null
           ua_answer_c?: string | null
@@ -185,15 +188,15 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "questions_question_type_id_fkey"
-            columns: ["question_type_id"]
+            foreignKeyName: "questions_category_id_fkey"
+            columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "category"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
       }
-      type: {
+      types: {
         Row: {
           id: number
           name: string
@@ -213,6 +216,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_unanswered_or_incorrect_questions: {
+        Args: { category_id: number; max_questions: number; user_uuid: string }
+        Returns: {
+          answerA: string
+          answerB: string
+          answerC: string
+          categoryID: number
+          categoryName: string
+          content: string
+          correctAnswer: string
+          mediaSrc: string
+          questionID: number
+        }[]
+      }
       is_active_subscriber: {
         Args: Record<PropertyKey, never>
         Returns: boolean

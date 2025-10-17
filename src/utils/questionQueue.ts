@@ -1,0 +1,119 @@
+import { getPendingQuestions, type questionsRaw } from "../app/pages/dashboard";
+import { QUESTIONS_TO_QUEUE } from "../config/questions";
+import type {
+	questionData,
+	questionDataPromise,
+} from "../types/questions.types";
+
+export default class QuestionsQueue {
+	#data: questionDataPromise[] = [];
+	#currentlyLoadingQuestions = false;
+	#userID: string;
+	#categoryID: number;
+
+	static getMediaType(src?: string | null): questionDataPromise["mediaType"] {
+		if (src?.endsWith(".webp")) {
+			return "image";
+		} else if (src?.endsWith(".webm")) {
+			return "video";
+		} else {
+			return "none";
+		}
+	}
+
+	static promisifyQuestion(question: questionsRaw): questionDataPromise {
+		const { answerA, answerB, answerC, ...questionDataPromise } = {
+			...question,
+			media: Promise.resolve(new Blob()),
+			mediaType: this.getMediaType(question.mediaSrc),
+			answers: question.answerA
+				? {
+						answerA: question.answerA,
+						answerB: question.answerB,
+						answerC: question.answerC,
+				  }
+				: undefined,
+		};
+
+		return questionDataPromise;
+	}
+
+	async getQuestion(): Promise<questionData> {
+		const questionsPromise = this.#data.map(
+			(question) =>
+				new Promise<questionDataPromise>(async (resolve) => {
+					await question.media;
+					resolve(question);
+				})
+		);
+
+		const questionMediaLoaded = await Promise.any(questionsPromise);
+
+		const questionMediaLoadedIndex =
+			this.#data.indexOf(questionMediaLoaded);
+		const lastQuestionIndex = this.#data.length - 1;
+
+		{
+			[
+				this.#data[questionMediaLoadedIndex],
+				this.#data[lastQuestionIndex],
+			] = [
+				this.#data[lastQuestionIndex],
+				this.#data[questionMediaLoadedIndex],
+			];
+		}
+		this.#data.pop();
+
+		const { media, ...question } = {
+			...questionMediaLoaded,
+		};
+
+		const questionMedia = await questionMediaLoaded.media;
+
+		if (questionMedia) {
+			question.mediaSrc = URL.createObjectURL(questionMedia);
+		} else {
+			question.mediaSrc = undefined;
+		}
+
+		this.updateQueque();
+
+		return question;
+	}
+
+	async updateQueque() {
+		const questionsToQueue = QUESTIONS_TO_QUEUE - this.#data.length;
+		console.log(questionsToQueue);
+		if (this.#currentlyLoadingQuestions || questionsToQueue <= 0) {
+			return;
+		}
+
+		this.#currentlyLoadingQuestions = true;
+
+		const data = await getPendingQuestions(
+			this.#userID,
+			this.#categoryID,
+			questionsToQueue
+		);
+
+		const questions = data.map((q) => QuestionsQueue.promisifyQuestion(q));
+		this.#data = [...this.#data, ...questions];
+
+		this.#currentlyLoadingQuestions = false;
+	}
+
+	constructor(
+		userID: string,
+		categoryID: number,
+		preloadedQuestions?: questionDataPromise[]
+	) {
+		this.#userID = userID;
+		this.#categoryID = categoryID;
+
+		if (preloadedQuestions) {
+			this.#data = preloadedQuestions;
+		}
+
+		this.updateQueque();
+	}
+}
