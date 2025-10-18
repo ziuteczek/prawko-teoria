@@ -5,10 +5,11 @@ import type {
 	possibleCorrectAnswers,
 	questionData,
 } from "../../../types/questions.types";
-import Question from "./Question";
 import { AuthContext } from "../../../context/auth";
 import QuestionsQueue from "../../../utils/questionQueue";
-import Answer from "./Answer";
+import MediaEl from "./MediaEl";
+import ConfirmBtn from "./ConfirmBtn";
+import AnswersBtns from "./AnswersBtns";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -20,7 +21,7 @@ export default function Quiz() {
 	const { user } = useContext(AuthContext);
 	const { preloadData, setPreloadData } = useContext(PreloadContext);
 
-	const [isAnswering, setIsAnswering] = useState<boolean>(false);
+	const [isAnswering, setIsAnswering] = useState<boolean>(true);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
@@ -33,10 +34,16 @@ export default function Quiz() {
 		categoryName: "",
 		content: "",
 		mediaType: "none",
+		correctAnswer: "N",
 	});
 
 	useEffect(() => {
-		if (!setPreloadData || !preloadData?.length || !user) {
+		if (!user) {
+			redirect("/");
+			return;
+		}
+
+		if (!setPreloadData || !preloadData?.length) {
 			return;
 		}
 
@@ -65,6 +72,12 @@ export default function Quiz() {
 			return;
 		}
 
+		if (currQuestion.mediaSrc) {
+			URL.revokeObjectURL(currQuestion.mediaSrc);
+		}
+
+		setSelectedAnswer(null);
+		
 		questionsQueueRef.current
 			.getQuestion()
 			.then((newQuestion) => setCurrQuestion(newQuestion));
@@ -75,25 +88,26 @@ export default function Quiz() {
 	}, []);
 
 	if (!user) {
-		redirect("/");
 		return null;
 	}
 
-	console.log(questionsQueueRef.current);
-
-	return isAnswering ? (
-		<Question
-			questionData={currQuestion}
-			isAnswering={isAnswering}
-			setIsAnswering={setIsAnswering}
-			selectedAnswer={selectedAnswer}
-			setSelectedAnswer={setSelectedAnswer}
-		/>
-	) : (
-		<Answer
-			questionData={currQuestion}
-			isAnswering={isAnswering}
-			setIsAnswering={setIsAnswering}
-		/>
+	return (
+		<>
+			<MediaEl
+				src={currQuestion.mediaSrc}
+				mediaType={currQuestion.mediaType}
+			/>
+			<p>{currQuestion.content}</p>
+			<ConfirmBtn
+				isAnswering={isAnswering}
+				setIsAnswering={setIsAnswering}
+			/>
+			<AnswersBtns
+				answers={currQuestion.answers}
+				selectedAnswer={selectedAnswer}
+				setSelectedAnswer={setSelectedAnswer}
+				isAnswering={isAnswering}
+			/>
+		</>
 	);
 }

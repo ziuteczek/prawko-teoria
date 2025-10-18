@@ -216,18 +216,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_user_unanswered_or_incorrect_questions: {
-        Args: { category_id: number; max_questions: number; user_uuid: string }
+      get_profile_question_stats: {
+        Args: { p_profile_id: string }
+        Returns: {
+          category_id: number
+          category_title: string
+          known_questions: number
+          undiscovered_questions: number
+          unknown_questions: number
+        }[]
+      }
+      get_quiz_questions: {
+        Args: {
+          pCategoryId: number
+          pIgnoreIds?: number[]
+          pLimit?: number
+          pProfileId: string
+        }
         Returns: {
           answerA: string
           answerB: string
           answerC: string
-          categoryID: number
+          categoryId: number
           categoryName: string
           content: string
           correctAnswer: string
-          mediaSrc: string
-          questionID: number
+          deAnswerA: string
+          deAnswerB: string
+          deAnswerC: string
+          deQuestion: string
+          engAnswerA: string
+          engAnswerB: string
+          engAnswerC: string
+          engQuestion: string
+          explanation: string
+          media: string
+          questionId: number
+          uaAnswerA: string
+          uaAnswerB: string
+          uaAnswerC: string
+          uaQuestion: string
+          userAnswer: string
         }[]
       }
       is_active_subscriber: {

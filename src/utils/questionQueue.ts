@@ -1,9 +1,11 @@
-import { getPendingQuestions, type questionsRaw } from "../app/pages/dashboard";
+import { getPendingQuestions, type questionsRaw } from "./questions";
 import { QUESTIONS_TO_QUEUE } from "../config/questions";
 import type {
+	possibleCorrectAnswers,
 	questionData,
 	questionDataPromise,
 } from "../types/questions.types";
+import { getCloudMedia } from "./getMedia";
 
 export default class QuestionsQueue {
 	#data: questionDataPromise[] = [];
@@ -22,17 +24,29 @@ export default class QuestionsQueue {
 	}
 
 	static promisifyQuestion(question: questionsRaw): questionDataPromise {
-		const { answerA, answerB, answerC, ...questionDataPromise } = {
+		const questionPossibleAnswers = question.answerA
+			? {
+					answerA: question.answerA,
+					answerB: question.answerB,
+					answerC: question.answerC,
+			  }
+			: undefined;
+
+		const {
+			answerA,
+			answerB,
+			answerC,
+			questionId,
+			categoryId,
+			...questionDataPromise
+		} = {
 			...question,
-			media: Promise.resolve(new Blob()),
-			mediaType: this.getMediaType(question.mediaSrc),
-			answers: question.answerA
-				? {
-						answerA: question.answerA,
-						answerB: question.answerB,
-						answerC: question.answerC,
-				  }
-				: undefined,
+			questionID: question.questionId,
+			categoryID: question.categoryId,
+			media: getCloudMedia(question.media) as Promise<Blob> ,
+			mediaType: this.getMediaType(question.media),
+			correctAnswer: question.correctAnswer as possibleCorrectAnswers,
+			answers: questionPossibleAnswers,
 		};
 
 		return questionDataPromise;
@@ -83,7 +97,7 @@ export default class QuestionsQueue {
 
 	async updateQueque() {
 		const questionsToQueue = QUESTIONS_TO_QUEUE - this.#data.length;
-		console.log(questionsToQueue);
+
 		if (this.#currentlyLoadingQuestions || questionsToQueue <= 0) {
 			return;
 		}

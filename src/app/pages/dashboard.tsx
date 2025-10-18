@@ -1,40 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/auth";
 import { Link, useNavigate } from "react-router";
-import { getUserCategoryStats } from "../../queries/user.stats";
 import { useInView } from "react-intersection-observer";
 import { PreloadContext } from "../../context/preload";
 import supabase from "../../utils/supabase";
 import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
 import QuestionsQueue from "../../utils/questionQueue";
+import type { Database } from "../../types/database.types";
+import { getPendingQuestions } from "../../utils/questions";
 
-export async function getPendingQuestions(
-	userId: string,
-	categoryID: number,
-	limit: number = 5
-) {
-	const { data, error } = await supabase.rpc(
-		"get_user_unanswered_or_incorrect_questions",
-		{
-			user_uuid: userId,
-			max_questions: limit,
-			category_id: categoryID,
-		}
-	);
-
-	if (error) {
-		console.error("Error fetching pending questions:", error);
-		return [];
-	}
-
-	return data;
-}
-
-export type questionsRaw = Awaited<
-	ReturnType<typeof getPendingQuestions>
->[number];
-
-type userCategoryStats = Awaited<ReturnType<typeof getUserCategoryStats>>;
+type userCategoryStats =
+	Database["public"]["Functions"]["get_profile_question_stats"]["Returns"];
 
 const getUserLocalStats = (): userCategoryStats | undefined => {
 	const userStatsString = localStorage.getItem("user-stats");
@@ -76,8 +52,6 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 			]);
 		};
 		preloadQuestions();
-
-		console.log(userStat.category_title);
 	}, [inView]);
 
 	return (
@@ -109,6 +83,7 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		if (!user) {
+			redirect("/");
 			return;
 		}
 
@@ -117,16 +92,26 @@ export default function Dashboard() {
 			setUserStats(localUserStats);
 		}
 
-		getUserCategoryStats(user.id).then((data) => {
-			setUserStats(data);
-			localStorage.setItem("user-stats", JSON.stringify(data));
-		});
+		supabase
+			.rpc("get_profile_question_stats", { p_profile_id: user.id })
+			.then(({ data, error }) => {
+				if (error) {
+					throw new Error(error.message);
+				}
+
+				setUserStats(data);
+				localStorage.setItem("user-stats", JSON.stringify(data));
+			});
 	}, [user]);
 
 	if (!user) {
-		redirect("/register");
 		return null;
 	}
 
-	return <CategoryStats usersStats={userStats} />;
+	return (
+		<>
+			<CategoryStats usersStats={userStats} />
+			<button onClick={() => supabase.auth.signOut()}>Wyloguj</button>
+		</>
+	);
 }
