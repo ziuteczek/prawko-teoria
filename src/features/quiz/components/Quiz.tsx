@@ -10,6 +10,8 @@ import QuestionsQueue from "../../../utils/questionQueue";
 import MediaEl from "./MediaEl";
 import ConfirmBtn from "./ConfirmBtn";
 import AnswersBtns from "./AnswersBtns";
+import { useCountdown } from "../hooks/Countdown";
+import Timer from "./Timer";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -21,12 +23,18 @@ export default function Quiz() {
 	const { user } = useContext(AuthContext);
 	const { preloadData, setPreloadData } = useContext(PreloadContext);
 
+	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
 	const [isAnswering, setIsAnswering] = useState<boolean>(true);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
 	const questionsQueueRef = useRef<QuestionsQueue | null>(null);
 	const isFirstRun = useRef<boolean>(true);
+	const [questionStage, setQuestionStage] = useState<"reading" | "answering">(
+		"reading"
+	);
+
+	const { isFinished, seconds, reset } = useCountdown(15);
 
 	const [currQuestion, setCurrQuestion] = useState<questionData>({
 		questionID: 0,
@@ -76,12 +84,39 @@ export default function Quiz() {
 			URL.revokeObjectURL(currQuestion.mediaSrc);
 		}
 
+		reset(15);
 		setSelectedAnswer(null);
-		
+		setQuestionStage("reading")
+
 		questionsQueueRef.current
 			.getQuestion()
 			.then((newQuestion) => setCurrQuestion(newQuestion));
 	}, [isAnswering]);
+
+	useEffect(() => {
+		if (isFirstRun.current) {
+			return;
+		}
+
+		if (questionStage === "reading") {
+			reset(15);
+			setQuestionStage("answering");
+		}
+		if (questionStage === "answering") {
+			setIsAnswering(false);
+		}
+	}, [isFinished]);
+
+	useEffect(() => {
+		if (!isVideoPlaying) {
+			return;
+		}
+
+		if (questionStage === "reading") {
+			reset(15);
+			setQuestionStage("answering");
+		}
+	}, [isVideoPlaying]);
 
 	useEffect(() => {
 		isFirstRun.current = false;
@@ -96,6 +131,9 @@ export default function Quiz() {
 			<MediaEl
 				src={currQuestion.mediaSrc}
 				mediaType={currQuestion.mediaType}
+				isAnswering={isAnswering}
+				isVideoPlaying={isVideoPlaying}
+				setIsVideoPlaying={setIsVideoPlaying}
 			/>
 			<p>{currQuestion.content}</p>
 			<ConfirmBtn
@@ -107,7 +145,9 @@ export default function Quiz() {
 				selectedAnswer={selectedAnswer}
 				setSelectedAnswer={setSelectedAnswer}
 				isAnswering={isAnswering}
+				correctAnswer={currQuestion.correctAnswer}
 			/>
+			<Timer seconds={seconds} isAnswering={isAnswering} />
 		</>
 	);
 }

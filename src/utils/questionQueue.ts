@@ -43,7 +43,7 @@ export default class QuestionsQueue {
 			...question,
 			questionID: question.questionId,
 			categoryID: question.categoryId,
-			media: getCloudMedia(question.media) as Promise<Blob> ,
+			media: getCloudMedia(question.media) as Promise<Blob>,
 			mediaType: this.getMediaType(question.media),
 			correctAnswer: question.correctAnswer as possibleCorrectAnswers,
 			answers: questionPossibleAnswers,
@@ -104,13 +104,16 @@ export default class QuestionsQueue {
 
 		this.#currentlyLoadingQuestions = true;
 
-		const data = await getPendingQuestions(
+		const pendingQuestions = await getPendingQuestions(
 			this.#userID,
 			this.#categoryID,
-			questionsToQueue
+			questionsToQueue,
+			this.#data.map((q) => q.questionID)
 		);
 
-		const questions = data.map((q) => QuestionsQueue.promisifyQuestion(q));
+		const questions = pendingQuestions.map((q) =>
+			QuestionsQueue.promisifyQuestion(q)
+		);
 		this.#data = [...this.#data, ...questions];
 
 		this.#currentlyLoadingQuestions = false;

@@ -4,11 +4,23 @@ import type {
 	questionAnswers,
 } from "../../../types/questions.types";
 
+const getAnswerStyle = (
+	isAnswering: boolean,
+	elsAnswer: possibleCorrectAnswers,
+	correctAnswer: possibleCorrectAnswers
+) => {
+	return {
+		backgroundColor:
+			!isAnswering && correctAnswer === elsAnswer ? "green" : "",
+	};
+};
+
 export default function AnswersBtns({
 	answers,
 	selectedAnswer,
 	setSelectedAnswer,
 	isAnswering,
+	correctAnswer,
 }: {
 	answers?: questionAnswers;
 	selectedAnswer: possibleCorrectAnswers | null;
@@ -16,61 +28,36 @@ export default function AnswersBtns({
 		React.SetStateAction<possibleCorrectAnswers | null>
 	>;
 	isAnswering: boolean;
+	correctAnswer: possibleCorrectAnswers;
 }) {
-	if (!answers) {
-		return (
-			<>
-				<label htmlFor="T">Tak</label>
-				<input
-					type="radio"
-					name="answer"
-					id="T"
-					checked={selectedAnswer === "T"}
-					disabled={!isAnswering}
-					onChange={() => setSelectedAnswer("T")}
-				/>
-				<label htmlFor="N">Nie</label>
-				<input
-					type="radio"
-					name="answer"
-					id="N"
-					disabled={!isAnswering}
-					checked={selectedAnswer === "N"}
-					onChange={() => setSelectedAnswer("N")}
-				/>
-			</>
-		);
-	}
-	const { answerA, answerB, answerC } = answers;
-	return (
-		<>
-			<label htmlFor="A">{answerA}</label>
+	const possibleAnswersCodes: possibleCorrectAnswers[] = answers
+		? ["A", "B", "C"]
+		: ["T", "N"];
+	const possibleAnswersContent = answers
+		? [answers.answerA, answers.answerB, answers.answerC]
+		: ["Tak", "Nie"];
+
+	const possibleAnswers = possibleAnswersCodes.map((code, i) => ({
+		content: possibleAnswersContent[i],
+		code,
+	}));
+
+	return possibleAnswers.map(({ code, content }) => (
+		<React.Fragment key={code}>
+			<label
+				htmlFor={code}
+				style={getAnswerStyle(isAnswering, code, correctAnswer)}
+			>
+				{content}
+			</label>
 			<input
 				type="radio"
 				name="answer"
-				id="A"
+				id={code}
+				checked={selectedAnswer === code}
 				disabled={!isAnswering}
-				checked={selectedAnswer === "A"}
-				onChange={() => setSelectedAnswer("A")}
+				onChange={() => setSelectedAnswer(code)}
 			/>
-			<label htmlFor="B">{answerB}</label>
-			<input
-				type="radio"
-				name="answer"
-				id="B"
-				disabled={!isAnswering}
-				checked={selectedAnswer === "B"}
-				onChange={() => setSelectedAnswer("B")}
-			/>
-			<label htmlFor="C">{answerC}</label>
-			<input
-				type="radio"
-				name="answer"
-				id="C"
-				disabled={!isAnswering}
-				checked={selectedAnswer === "C"}
-				onChange={() => setSelectedAnswer("C")}
-			/>
-		</>
-	);
+		</React.Fragment>
+	));
 }

@@ -1,7 +1,7 @@
 export interface questionAnswers {
-	answerA?: string;
-	answerB?: string;
-	answerC?: string;
+	answerA: string;
+	answerB: string;
+	answerC: string;
 }
 export interface questionData {
 	questionID: number;
