@@ -1,17 +1,14 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { PreloadContext } from "../../../context/preload";
-import type {
-	possibleCorrectAnswers,
-	questionData,
-} from "../../../types/questions.types";
+import type { possibleCorrectAnswers } from "../../../types/questions.types";
 import { AuthContext } from "../../../context/auth";
-import QuestionsQueue from "../../../utils/questionQueue";
 import MediaEl from "./MediaEl";
 import ConfirmBtn from "./ConfirmBtn";
 import AnswersBtns from "./AnswersBtns";
 import { useCountdown } from "../hooks/Countdown";
 import Timer from "./Timer";
+import useQuestion from "../hooks/Question";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -21,59 +18,28 @@ export default function Quiz() {
 	const quizCategoryID = Number(currCategoryIDStr);
 
 	const { user } = useContext(AuthContext);
-	const { preloadData, setPreloadData } = useContext(PreloadContext);
+	const { preloadData } = useContext(PreloadContext);
 
 	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
 	const [isAnswering, setIsAnswering] = useState<boolean>(true);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
-	const questionsQueueRef = useRef<QuestionsQueue | null>(null);
 	const isFirstRun = useRef<boolean>(true);
 	const [questionStage, setQuestionStage] = useState<"reading" | "answering">(
 		"reading"
 	);
 
 	const { isFinished, seconds, reset } = useCountdown(15);
-
-	const [currQuestion, setCurrQuestion] = useState<questionData>({
-		questionID: 0,
-		categoryID: 0,
-		categoryName: "",
-		content: "",
-		mediaType: "none",
-		correctAnswer: "N",
-	});
+	const { currQuestion, nextQuestion } = useQuestion(
+		user?.id || "",
+		quizCategoryID,
+		preloadData || []
+	);
 
 	useEffect(() => {
 		if (!user) {
 			redirect("/");
-			return;
-		}
-
-		if (!setPreloadData || !preloadData?.length) {
-			return;
-		}
-
-		questionsQueueRef.current = new QuestionsQueue(
-			user.id,
-			quizCategoryID,
-			preloadData
-		);
-		questionsQueueRef.current.updateQueque();
-
-		setPreloadData([]);
-	}, [preloadData]);
-
-	useEffect(() => {
-		if (!(questionsQueueRef.current instanceof QuestionsQueue)) {
-			return;
-		}
-
-		if (isFirstRun.current) {
-			questionsQueueRef.current
-				.getQuestion()
-				.then((newQuestion) => setCurrQuestion(newQuestion));
 		}
 
 		if (!isAnswering) {
@@ -86,11 +52,9 @@ export default function Quiz() {
 
 		reset(15);
 		setSelectedAnswer(null);
-		setQuestionStage("reading")
+		setQuestionStage("reading");
 
-		questionsQueueRef.current
-			.getQuestion()
-			.then((newQuestion) => setCurrQuestion(newQuestion));
+		nextQuestion();
 	}, [isAnswering]);
 
 	useEffect(() => {
@@ -121,10 +85,6 @@ export default function Quiz() {
 	useEffect(() => {
 		isFirstRun.current = false;
 	}, []);
-
-	if (!user) {
-		return null;
-	}
 
 	return (
 		<>

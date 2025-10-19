@@ -5,9 +5,9 @@ import { useInView } from "react-intersection-observer";
 import { PreloadContext } from "../../context/preload";
 import supabase from "../../utils/supabase";
 import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
-import QuestionsQueue from "../../utils/questionQueue";
 import type { Database } from "../../types/database.types";
 import { getPendingQuestions } from "../../utils/questions";
+import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
 
 type userCategoryStats =
 	Database["public"]["Functions"]["get_profile_question_stats"]["Returns"];
@@ -48,7 +48,7 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 
 			setPreloadData((data) => [
 				...data,
-				...questionsRaw.map((q) => QuestionsQueue.promisifyQuestion(q)),
+				...questionsRaw.map((q) => promisifyQuestion(q)),
 			]);
 		};
 		preloadQuestions();

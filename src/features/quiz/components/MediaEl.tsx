@@ -12,7 +12,7 @@ export default function MediaEl({
 	src,
 	mediaType,
 	isAnswering,
-	isVideoPlaying,
+
 	setIsVideoPlaying,
 }: {
 	src?: string;
