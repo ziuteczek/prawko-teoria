@@ -12,7 +12,7 @@ export default function MediaEl({
 	src,
 	mediaType,
 	isAnswering,
-
+	isVideoPlaying,
 	setIsVideoPlaying,
 }: {
 	src?: string;
@@ -22,6 +22,19 @@ export default function MediaEl({
 	setIsVideoPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	const videoPlayed = useRef<boolean>(false);
+	const videoElRef = useRef<HTMLVideoElement | null>(null);
+
+	useEffect(() => {
+		setIsVideoPlaying(false);
+	}, [src]);
+
+	useEffect(() => {
+		if (isVideoPlaying) {
+			videoElRef.current?.play();
+		} else {
+			videoElRef.current?.pause();
+		}
+	}, [isVideoPlaying]);
 
 	useEffect(() => {
 		if (!isAnswering) {
@@ -42,6 +55,7 @@ export default function MediaEl({
 	if (mediaType === "video") {
 		return (
 			<video
+				ref={videoElRef}
 				src={src}
 				onClick={(e) => handleVideoPlay(e, videoPlayed)}
 				onPlay={() => setIsVideoPlaying(true)}

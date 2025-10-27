@@ -30,7 +30,7 @@ export default function Quiz() {
 		"reading"
 	);
 
-	const { isFinished, seconds, reset } = useCountdown(15);
+	const { isFinished, seconds, reset, pause } = useCountdown(15);
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
@@ -73,13 +73,18 @@ export default function Quiz() {
 
 	useEffect(() => {
 		if (!isVideoPlaying) {
+			reset(15);
 			return;
 		}
 
 		if (questionStage === "reading") {
-			reset(15);
+			pause();
 			setQuestionStage("answering");
 		}
+	}, [isVideoPlaying]);
+
+	useEffect(() => {
+		console.log(isVideoPlaying);
 	}, [isVideoPlaying]);
 
 	useEffect(() => {
@@ -107,7 +112,8 @@ export default function Quiz() {
 				isAnswering={isAnswering}
 				correctAnswer={currQuestion.correctAnswer}
 			/>
-			<Timer seconds={seconds} isAnswering={isAnswering} />
+			{isAnswering ? <p>Czas na {questionStage}</p> : <></>}
+			<Timer seconds={seconds} isAnswering={isAnswering} isVideoPlaying={isVideoPlaying} />
 		</>
 	);
 }

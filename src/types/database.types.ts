@@ -259,10 +259,7 @@ export type Database = {
           userAnswer: string
         }[]
       }
-      is_active_subscriber: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_active_subscriber: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
