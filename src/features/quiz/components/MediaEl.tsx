@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import type { QuizStage } from "../types";
 
 const handleVideoPlay = (
 	e: React.MouseEvent<HTMLVideoElement, MouseEvent>,
@@ -11,13 +12,13 @@ const handleVideoPlay = (
 export default function MediaEl({
 	src,
 	mediaType,
-	isAnswering,
+	quizStage,
 	isVideoPlaying,
 	setIsVideoPlaying,
 }: {
 	src?: string;
 	mediaType: "image" | "video" | "none";
-	isAnswering: boolean;
+	quizStage: QuizStage;
 	isVideoPlaying: boolean;
 	setIsVideoPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -37,11 +38,11 @@ export default function MediaEl({
 	}, [isVideoPlaying]);
 
 	useEffect(() => {
-		if (!isAnswering) {
+		if (quizStage !== "explanation") {
 			return;
 		}
 		videoPlayed.current = false;
-	}, [isAnswering]);
+	}, [quizStage]);
 
 	if (!mediaType) {
 		return (

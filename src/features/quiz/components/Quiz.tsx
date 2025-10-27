@@ -9,6 +9,7 @@ import AnswersBtns from "./AnswersBtns";
 import { useCountdown } from "../hooks/Countdown";
 import Timer from "./Timer";
 import useQuestion from "../hooks/Question";
+import type { QuizStage } from "../types";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -21,14 +22,12 @@ export default function Quiz() {
 	const { preloadData } = useContext(PreloadContext);
 
 	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
-	const [isAnswering, setIsAnswering] = useState<boolean>(true);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
 	const isFirstRun = useRef<boolean>(true);
-	const [questionStage, setQuestionStage] = useState<"reading" | "answering">(
-		"reading"
-	);
+
+	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
 	const { isFinished, seconds, reset, pause } = useCountdown(15);
 	const { currQuestion, nextQuestion } = useQuestion(
@@ -41,47 +40,7 @@ export default function Quiz() {
 		if (!user) {
 			redirect("/");
 		}
-
-		if (!isAnswering) {
-			return;
-		}
-
-		if (currQuestion.mediaSrc) {
-			URL.revokeObjectURL(currQuestion.mediaSrc);
-		}
-
-		reset(15);
-		setSelectedAnswer(null);
-		setQuestionStage("reading");
-
-		nextQuestion();
-	}, [isAnswering]);
-
-	useEffect(() => {
-		if (isFirstRun.current) {
-			return;
-		}
-
-		if (questionStage === "reading") {
-			reset(15);
-			setQuestionStage("answering");
-		}
-		if (questionStage === "answering") {
-			setIsAnswering(false);
-		}
-	}, [isFinished]);
-
-	useEffect(() => {
-		if (!isVideoPlaying) {
-			reset(15);
-			return;
-		}
-
-		if (questionStage === "reading") {
-			pause();
-			setQuestionStage("answering");
-		}
-	}, [isVideoPlaying]);
+	}, []);
 
 	useEffect(() => {
 		console.log(isVideoPlaying);
@@ -96,24 +55,25 @@ export default function Quiz() {
 			<MediaEl
 				src={currQuestion.mediaSrc}
 				mediaType={currQuestion.mediaType}
-				isAnswering={isAnswering}
+				quizStage={quizStage}
 				isVideoPlaying={isVideoPlaying}
 				setIsVideoPlaying={setIsVideoPlaying}
 			/>
 			<p>{currQuestion.content}</p>
-			<ConfirmBtn
-				isAnswering={isAnswering}
-				setIsAnswering={setIsAnswering}
-			/>
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
 			<AnswersBtns
 				answers={currQuestion.answers}
 				selectedAnswer={selectedAnswer}
 				setSelectedAnswer={setSelectedAnswer}
-				isAnswering={isAnswering}
+				quizStage={quizStage}
 				correctAnswer={currQuestion.correctAnswer}
 			/>
-			{isAnswering ? <p>Czas na {questionStage}</p> : <></>}
-			<Timer seconds={seconds} isAnswering={isAnswering} isVideoPlaying={isVideoPlaying} />
+			<p>Czas na {quizStage}</p>
+			<Timer
+				seconds={seconds}
+				quizStage={quizStage}
+				isVideoPlaying={isVideoPlaying}
+			/>
 		</>
 	);
 }

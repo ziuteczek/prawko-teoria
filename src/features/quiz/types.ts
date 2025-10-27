@@ -15,3 +15,4 @@ export interface questionData {
 	answers?: questionAnswers;
 	correctAnswer: possibleCorrectAnswers;
 }
+export type QuizStage = "reading" | "answering" | "explanation";

@@ -1,11 +1,13 @@
+import type { QuizStage } from "../types";
+
 export default function Timer({
 	seconds,
-	isAnswering,
+	quizStage,
 	isVideoPlaying,
 }: {
 	seconds: number;
-	isAnswering: boolean;
+	quizStage: QuizStage;
 	isVideoPlaying: boolean;
 }) {
-	return isAnswering ? <p>{isVideoPlaying ? 15 : seconds}</p> : <></>;
+	return quizStage !== "explanation" ? <p>{isVideoPlaying ? 15 : seconds}</p> : <></>;
 }
