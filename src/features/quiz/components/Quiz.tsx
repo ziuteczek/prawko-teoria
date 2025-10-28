@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { PreloadContext } from "../../../context/preload";
 import type { possibleCorrectAnswers } from "../../../types/questions.types";
@@ -25,11 +25,9 @@ export default function Quiz() {
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
-	const isFirstRun = useRef<boolean>(true);
-
 	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
-	const { isFinished, seconds, reset, pause } = useCountdown(15);
+	const { isFinished, seconds, reset, pause, resume } = useCountdown(15);
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
@@ -40,15 +38,36 @@ export default function Quiz() {
 		if (!user) {
 			redirect("/");
 		}
-	}, []);
+	}, [user, redirect]);
 
 	useEffect(() => {
-		console.log(isVideoPlaying);
-	}, [isVideoPlaying]);
+		if (!isFinished) return;
+
+		setQuizStage((prev) => {
+			if (prev === "reading") return "answering";
+			if (prev === "answering") return "explanation";
+			return "reading";
+		});
+	}, [isFinished]);
 
 	useEffect(() => {
-		isFirstRun.current = false;
-	}, []);
+		if (quizStage === "reading") {
+			reset(15);
+			nextQuestion();
+		} else if (quizStage === "answering") {
+			reset(15);
+		}
+	}, [quizStage, nextQuestion, reset]);
+
+	useEffect(() => {
+		if (isVideoPlaying) {
+			reset(15);
+			pause();
+		}
+		if (!isVideoPlaying) {
+			resume();
+		}
+	}, [isVideoPlaying, pause, reset, resume]);
 
 	return (
 		<>
@@ -69,11 +88,7 @@ export default function Quiz() {
 				correctAnswer={currQuestion.correctAnswer}
 			/>
 			<p>Czas na {quizStage}</p>
-			<Timer
-				seconds={seconds}
-				quizStage={quizStage}
-				isVideoPlaying={isVideoPlaying}
-			/>
+			<Timer seconds={seconds} quizStage={quizStage} />
 		</>
 	);
 }

@@ -1,10 +1,5 @@
 import type { questionAnswers, possibleCorrectAnswers } from "../../types/questions.types";
 
-export interface CountdownHook {
-  seconds: number;
-  isFinished: boolean;
-  reset: (newSeconds?: number) => void;
-}
 export interface questionData {
 	questionID: number;
 	categoryID: number;
