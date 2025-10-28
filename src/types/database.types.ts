@@ -259,14 +259,7 @@ export type Database = {
           userAnswer: string
         }[]
       }
-      insert_answer: {
-        Args: { p_answer: string; p_profile_id: number; p_question_id: number }
-        Returns: undefined
-      }
-      is_active_subscriber: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_active_subscriber: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

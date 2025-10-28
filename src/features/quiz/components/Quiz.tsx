@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { PreloadContext } from "../../../context/preload";
 import type { possibleCorrectAnswers } from "../../../types/questions.types";
@@ -9,6 +9,7 @@ import AnswersBtns from "./AnswersBtns";
 import { useCountdown } from "../hooks/Countdown";
 import Timer from "./Timer";
 import useQuestion from "../hooks/Question";
+import type { QuizStage } from "../types";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -21,16 +22,12 @@ export default function Quiz() {
 	const { preloadData } = useContext(PreloadContext);
 
 	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
-	const [isAnswering, setIsAnswering] = useState<boolean>(true);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
 
-	const isFirstRun = useRef<boolean>(true);
-	const [questionStage, setQuestionStage] = useState<"reading" | "answering">(
-		"reading"
-	);
+	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
-	const { isFinished, seconds, reset } = useCountdown(15);
+	const { isFinished, seconds, reset, pause, resume } = useCountdown(15);
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
@@ -41,73 +38,57 @@ export default function Quiz() {
 		if (!user) {
 			redirect("/");
 		}
-
-		if (!isAnswering) {
-			return;
-		}
-
-		if (currQuestion.mediaSrc) {
-			URL.revokeObjectURL(currQuestion.mediaSrc);
-		}
-
-		reset(15);
-		setSelectedAnswer(null);
-		setQuestionStage("reading");
-
-		nextQuestion();
-	}, [isAnswering]);
+	}, [user, redirect]);
 
 	useEffect(() => {
-		if (isFirstRun.current) {
-			return;
-		}
+		if (!isFinished) return;
 
-		if (questionStage === "reading") {
-			reset(15);
-			setQuestionStage("answering");
-		}
-		if (questionStage === "answering") {
-			setIsAnswering(false);
-		}
+		setQuizStage((prev) => {
+			if (prev === "reading") return "answering";
+			if (prev === "answering") return "explanation";
+			return "reading";
+		});
 	}, [isFinished]);
 
 	useEffect(() => {
-		if (!isVideoPlaying) {
-			return;
-		}
-
-		if (questionStage === "reading") {
+		if (quizStage === "reading") {
 			reset(15);
-			setQuestionStage("answering");
+			nextQuestion();
+		} else if (quizStage === "answering") {
+			reset(15);
 		}
-	}, [isVideoPlaying]);
+	}, [quizStage, nextQuestion, reset]);
 
 	useEffect(() => {
-		isFirstRun.current = false;
-	}, []);
+		if (isVideoPlaying) {
+			reset(15);
+			pause();
+		}
+		if (!isVideoPlaying) {
+			resume();
+		}
+	}, [isVideoPlaying, pause, reset, resume]);
 
 	return (
 		<>
 			<MediaEl
 				src={currQuestion.mediaSrc}
 				mediaType={currQuestion.mediaType}
-				isAnswering={isAnswering}
+				quizStage={quizStage}
 				isVideoPlaying={isVideoPlaying}
 				setIsVideoPlaying={setIsVideoPlaying}
 			/>
 			<p>{currQuestion.content}</p>
-			<ConfirmBtn
-				isAnswering={isAnswering}
-				setIsAnswering={setIsAnswering}
-			/>
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
 			<AnswersBtns
 				answers={currQuestion.answers}
 				selectedAnswer={selectedAnswer}
 				setSelectedAnswer={setSelectedAnswer}
-				isAnswering={isAnswering}
+				quizStage={quizStage}
 				correctAnswer={currQuestion.correctAnswer}
 			/>
-			<Timer seconds={seconds} isAnswering={isAnswering} />
+			<p>Czas na {quizStage}</p>
+			<Timer seconds={seconds} quizStage={quizStage} />
 		</>
 	);
 }

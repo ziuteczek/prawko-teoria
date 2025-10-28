@@ -3,15 +3,16 @@ import type {
 	possibleCorrectAnswers,
 	questionAnswers,
 } from "../../../types/questions.types";
+import type { QuizStage } from "../types";
 
 const getAnswerStyle = (
-	isAnswering: boolean,
+	quizStage: QuizStage,
 	elsAnswer: possibleCorrectAnswers,
 	correctAnswer: possibleCorrectAnswers
 ) => {
 	return {
 		backgroundColor:
-			!isAnswering && correctAnswer === elsAnswer ? "green" : "",
+			quizStage === "explanation" && correctAnswer === elsAnswer ? "green" : "",
 	};
 };
 
@@ -19,7 +20,7 @@ export default function AnswersBtns({
 	answers,
 	selectedAnswer,
 	setSelectedAnswer,
-	isAnswering,
+	quizStage,
 	correctAnswer,
 }: {
 	answers?: questionAnswers;
@@ -27,7 +28,7 @@ export default function AnswersBtns({
 	setSelectedAnswer: React.Dispatch<
 		React.SetStateAction<possibleCorrectAnswers | null>
 	>;
-	isAnswering: boolean;
+	quizStage: QuizStage;
 	correctAnswer: possibleCorrectAnswers;
 }) {
 	const possibleAnswersCodes: possibleCorrectAnswers[] = answers
@@ -46,7 +47,7 @@ export default function AnswersBtns({
 		<React.Fragment key={code}>
 			<label
 				htmlFor={code}
-				style={getAnswerStyle(isAnswering, code, correctAnswer)}
+				style={getAnswerStyle(quizStage, code, correctAnswer)}
 			>
 				{content}
 			</label>
@@ -55,7 +56,7 @@ export default function AnswersBtns({
 				name="answer"
 				id={code}
 				checked={selectedAnswer === code}
-				disabled={!isAnswering}
+				disabled={quizStage === "explanation"}
 				onChange={() => setSelectedAnswer(code)}
 			/>
 		</React.Fragment>

@@ -1,13 +1,21 @@
+import type { QuizStage } from "../types";
+
 export default function ConfirmBtn({
-	isAnswering,
-	setIsAnswering,
+	quizStage,
+	setQuizStage,
 }: {
-	isAnswering: boolean;
-	setIsAnswering: React.Dispatch<React.SetStateAction<boolean>>;
+	quizStage: QuizStage;
+	setQuizStage: React.Dispatch<React.SetStateAction<QuizStage>>;
 }) {
 	return (
-		<button onClick={() => setIsAnswering((isAnswering) => !isAnswering)}>
-			{isAnswering ? "Odpowiedz" : "Następne pytanie"}
+		<button
+			onClick={() =>
+				setQuizStage((quizStage) =>
+					quizStage === "explanation" ? "reading" : "explanation"
+				)
+			}
+		>
+			{quizStage === "explanation" ? "Następne pytanie" : "Odpowiedz"}
 		</button>
 	);
 }

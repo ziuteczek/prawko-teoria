@@ -1,34 +1,51 @@
 import { useEffect, useRef } from "react";
+import type { QuizStage } from "../types";
 
 const handleVideoPlay = (
 	e: React.MouseEvent<HTMLVideoElement, MouseEvent>,
-	videoPlayed: React.RefObject<boolean>
+	videoPlayed: React.RefObject<boolean>,
+	quizStage: QuizStage
 ) => {
-	videoPlayed.current || (e.target as HTMLVideoElement).play();
+	if (!videoPlayed.current && quizStage === "reading") {
+		(e.target as HTMLVideoElement).play();
+	}
 	videoPlayed.current = true;
 };
 
 export default function MediaEl({
 	src,
 	mediaType,
-	isAnswering,
-
+	quizStage,
+	isVideoPlaying,
 	setIsVideoPlaying,
 }: {
 	src?: string;
 	mediaType: "image" | "video" | "none";
-	isAnswering: boolean;
+	quizStage: QuizStage;
 	isVideoPlaying: boolean;
 	setIsVideoPlaying: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	const videoPlayed = useRef<boolean>(false);
+	const videoElRef = useRef<HTMLVideoElement | null>(null);
 
 	useEffect(() => {
-		if (!isAnswering) {
+		setIsVideoPlaying(false);
+	}, [src, setIsVideoPlaying]);
+
+	useEffect(() => {
+		if (isVideoPlaying) {
+			videoElRef.current?.play();
+		} else {
+			videoElRef.current?.pause();
+		}
+	}, [isVideoPlaying]);
+
+	useEffect(() => {
+		if (quizStage !== "explanation") {
 			return;
 		}
 		videoPlayed.current = false;
-	}, [isAnswering]);
+	}, [quizStage]);
 
 	if (!mediaType) {
 		return (
@@ -42,8 +59,9 @@ export default function MediaEl({
 	if (mediaType === "video") {
 		return (
 			<video
+				ref={videoElRef}
 				src={src}
-				onClick={(e) => handleVideoPlay(e, videoPlayed)}
+				onClick={(e) => handleVideoPlay(e, videoPlayed, quizStage)}
 				onPlay={() => setIsVideoPlaying(true)}
 				onEnded={() => setIsVideoPlaying(false)}
 			/>

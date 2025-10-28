@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { questionData } from "../types";
 import type { questionDataPromise } from "../../../types/questions.types";
 import { QUESTIONS_TO_QUEUE } from "../../../config/questions";
@@ -23,12 +23,12 @@ export default function useQuestion(
 	});
 
 	useEffect(() => {
-		if (preloadedQuestions) {
+		if (preloadedQuestions.length > 0) {
 			questionQueueData.current = preloadedQuestions;
 		}
-	}, []);
+	}, [preloadedQuestions]);
 
-	const updateQueque = async () => {
+	const updateQueque = useCallback(async () => {
 		//prettier-ignore
 		const questionsToQueue = QUESTIONS_TO_QUEUE - questionQueueData.current.length;
 
@@ -52,14 +52,15 @@ export default function useQuestion(
 		];
 
 		isQuestionLoading.current = false;
-	};
+	}, [userID, categoryID]);
 
-	const nextQuestion = async (): Promise<void> => {
+	const nextQuestion = useCallback(async () => {
 		const questionsPromise = questionQueueData.current.map(
 			(question) =>
-				new Promise<questionDataPromise>(async (resolve) => {
-					await question.media;
-					resolve(question);
+				new Promise<questionDataPromise>((resolve) => {
+					question.media.then(() => {
+						resolve(question);
+					});
 				})
 		);
 
@@ -80,9 +81,8 @@ export default function useQuestion(
 		}
 		questionQueueData.current.pop();
 
-		const { media, ...question } = {
-			...questionMediaLoaded,
-		};
+		// eslint-disable-next-line
+		const { media: _, ...question } = questionMediaLoaded;
 
 		const questionMedia = await questionMediaLoaded.media;
 
@@ -95,7 +95,7 @@ export default function useQuestion(
 		updateQueque();
 
 		setCurrQuestion(question);
-	};
+	}, [updateQueque, setCurrQuestion]);
 
 	return {
 		currQuestion,

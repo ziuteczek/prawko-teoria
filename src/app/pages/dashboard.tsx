@@ -52,7 +52,7 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 			]);
 		};
 		preloadQuestions();
-	}, [inView]);
+	}, [inView, setPreloadData, user, userStat.category_id]);
 
 	return (
 		<div ref={ref}>
@@ -102,7 +102,7 @@ export default function Dashboard() {
 				setUserStats(data);
 				localStorage.setItem("user-stats", JSON.stringify(data));
 			});
-	}, [user]);
+	}, [user, redirect]);
 
 	if (!user) {
 		return null;

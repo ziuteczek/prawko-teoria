@@ -1,10 +1,5 @@
 import type { questionAnswers, possibleCorrectAnswers } from "../../types/questions.types";
 
-export interface CountdownHook {
-  seconds: number;
-  isFinished: boolean;
-  reset: (newSeconds?: number) => void;
-}
 export interface questionData {
 	questionID: number;
 	categoryID: number;
@@ -15,3 +10,4 @@ export interface questionData {
 	answers?: questionAnswers;
 	correctAnswer: possibleCorrectAnswers;
 }
+export type QuizStage = "reading" | "answering" | "explanation";
