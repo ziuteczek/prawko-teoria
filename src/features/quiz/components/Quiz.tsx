@@ -61,7 +61,6 @@ export default function Quiz() {
 		}
 	}, [quizStage, nextQuestion, reset]);
 
-	// Pause/resume only during reading. Move to "answering" when video finishes.
 	useEffect(() => {
 		if (quizStage !== "reading") {
 			wasPlayingRef.current = isVideoPlaying;
