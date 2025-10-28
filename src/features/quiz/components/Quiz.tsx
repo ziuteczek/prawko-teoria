@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { PreloadContext } from "../../../context/preload";
 import type { possibleCorrectAnswers } from "../../../types/questions.types";
@@ -34,6 +34,8 @@ export default function Quiz() {
 		preloadData || []
 	);
 
+	const wasPlayingRef = useRef<boolean>(false);
+
 	useEffect(() => {
 		if (!user) {
 			redirect("/");
@@ -59,15 +61,26 @@ export default function Quiz() {
 		}
 	}, [quizStage, nextQuestion, reset]);
 
+	// Pause/resume only during reading. Move to "answering" when video finishes.
 	useEffect(() => {
+		if (quizStage !== "reading") {
+			wasPlayingRef.current = isVideoPlaying;
+			return;
+		}
+
 		if (isVideoPlaying) {
-			reset(15);
+			reset();
 			pause();
+		} else {
+			if (wasPlayingRef.current) {
+				setQuizStage("answering");
+			} else {
+				resume();
+			}
 		}
-		if (!isVideoPlaying) {
-			resume();
-		}
-	}, [isVideoPlaying, pause, reset, resume]);
+
+		wasPlayingRef.current = isVideoPlaying;
+	}, [isVideoPlaying, quizStage, pause, resume]);
 
 	return (
 		<>
