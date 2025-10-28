@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { CountdownHook } from "../types";
 
 export function useCountdown(initialSeconds: number) {
 	const [seconds, setSeconds] = useState(initialSeconds);
