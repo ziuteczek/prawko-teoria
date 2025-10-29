@@ -1,8 +1,8 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { PreloadContext } from "../../../context/preload";
+import { PreloadContext } from "../../../context/preload.context";
 import type { possibleCorrectAnswers } from "../../../types/questions.types";
-import { AuthContext } from "../../../context/auth";
+import { AuthContext } from "../../../context/auth.context";
 import MediaEl from "./MediaEl";
 import ConfirmBtn from "./ConfirmBtn";
 import AnswersBtns from "./AnswersBtns";
@@ -79,7 +79,7 @@ export default function Quiz() {
 		}
 
 		wasPlayingRef.current = isVideoPlaying;
-	}, [isVideoPlaying, quizStage, pause, resume]);
+	}, [isVideoPlaying, quizStage, pause, resume, reset]);
 
 	return (
 		<>
