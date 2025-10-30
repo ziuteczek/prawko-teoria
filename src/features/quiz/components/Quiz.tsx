@@ -31,7 +31,8 @@ export default function Quiz() {
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
-		preloadData || []
+		preloadData || [],
+		selectedAnswer
 	);
 
 	const wasPlayingRef = useRef<boolean>(false);

@@ -16,21 +16,21 @@ export type Database = {
     Tables: {
       answers: {
         Row: {
-          answer: string
+          answer: string | null
           created_at: string
           id: number
           profile_id: string
           question_id: number
         }
         Insert: {
-          answer: string
+          answer?: string | null
           created_at?: string
           id?: number
           profile_id: string
           question_id: number
         }
         Update: {
-          answer?: string
+          answer?: string | null
           created_at?: string
           id?: number
           profile_id?: string

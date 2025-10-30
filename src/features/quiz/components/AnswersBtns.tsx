@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type {
 	possibleCorrectAnswers,
 	questionAnswers,
@@ -12,7 +12,9 @@ const getAnswerStyle = (
 ) => {
 	return {
 		backgroundColor:
-			quizStage === "explanation" && correctAnswer === elsAnswer ? "green" : "",
+			quizStage === "explanation" && correctAnswer === elsAnswer
+				? "green"
+				: "",
 	};
 };
 
@@ -42,6 +44,12 @@ export default function AnswersBtns({
 		content: possibleAnswersContent[i],
 		code,
 	}));
+
+	useEffect(() => {
+		if (quizStage === "reading") {
+			setSelectedAnswer(null);
+		}
+	}, [setSelectedAnswer, quizStage]);
 
 	return possibleAnswers.map(({ code, content }) => (
 		<React.Fragment key={code}>
