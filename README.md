@@ -1,14 +1,13 @@
 # Prawko Teoria
-Interactive learing web app for learning topics to polish driving license test!
+A web app to help prepare for the driving license theory exam.  
 
-Features:
-- **Learning mode:**
-    - **Queuing** next questions content and media provides smooth and lag free experience.
-    - **Interactive dasboard** allows tracking your learning experience. *(TBD)*
-    - **AI assistance** allowing the user to ask for a deeper explanation of certain traffic regulations, clarify doubts about specific rules, or receive examples of proper application in real-world driving scenarios. *(TBD)*
-- **Test mode** is a copy of real life driving license test
+- **Backend:** Supabase + Google Cloud (media storage)  
+- **Frontend:** React (Vite) + Astro (landing page)  
+- Includes practice quizzes and lessons
+- Upcoming features: **AI assistance**, mock tests *(coming soon)*
 
-**MORE TBA**
+**MORE COMING SOON**
+
 ## Stack
 - **Backend** - Supabase
 - **Frontend** - React Vite *(app)* + Astro *(index page)*
