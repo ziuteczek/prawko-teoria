@@ -19,6 +19,8 @@ export default function useQuestion(
 	const isQuestionLoading = useRef<boolean>(false);
 	const currentlyUploadedAnswers = useRef<number[]>([]);
 
+	const isFristQuestion = useRef<boolean>(true);
+
 	const usersAnswer = useRef<possibleCorrectAnswers | null>(selectedAnswer);
 
 	const [currQuestion, setCurrQuestion] = useState<questionData>({
@@ -124,9 +126,11 @@ export default function useQuestion(
 		}
 		const questionAnsweredID = questionQueueData.current.pop()?.questionID;
 
-		if (questionAnsweredID) {
+		if (questionAnsweredID && !isFristQuestion.current) {
 			sendAnswer(questionAnsweredID, usersAnswer.current);
 		}
+
+		isFristQuestion.current = false;
 
 		// eslint-disable-next-line
 		const { media: _, ...question } = questionMediaLoaded;

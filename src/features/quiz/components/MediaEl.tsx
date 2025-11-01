@@ -41,7 +41,7 @@ export default function MediaEl({
 	}, [isVideoPlaying]);
 
 	useEffect(() => {
-		if (quizStage !== "explanation") {
+		if (quizStage === "explanation") {
 			return;
 		}
 		videoPlayed.current = false;
