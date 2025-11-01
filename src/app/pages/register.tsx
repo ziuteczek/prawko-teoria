@@ -49,6 +49,37 @@ export default function Register() {
 		}
 	};
 
+	const registerUserFacebook = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => {
+		e.preventDefault();
+
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: "facebook",
+		});
+
+		if (error) {
+			alert(error.message);
+		}
+	};
+
+	const registerUserGoogle = async (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	) => {
+		e.preventDefault();
+
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: {
+				redirectTo: "/dashboard?has_profile=true",
+			},
+		});
+
+		if (error) {
+			alert(error.message);
+		}
+	};
+
 	return (
 		<form onSubmit={registerUser}>
 			<label htmlFor="email">email</label>
@@ -78,6 +109,12 @@ export default function Register() {
 
 			<button type="submit">Zarejestruj się</button>
 			<Link to="/login">zaloguj się</Link>
+			<button type="button" onClick={(e) => registerUserFacebook(e)}>
+				fejsbuk
+			</button>
+			<button type="button" onClick={(e) => registerUserGoogle(e)}>
+				Google
+			</button>
 		</form>
 	);
 }

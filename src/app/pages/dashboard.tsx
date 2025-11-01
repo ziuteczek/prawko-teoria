@@ -8,6 +8,7 @@ import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
 import type { Database } from "../../types/database.types";
 import { getPendingQuestions } from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
+import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
 
 type userCategoryStats =
 	Database["public"]["Functions"]["get_profile_question_stats"]["Returns"];
@@ -110,6 +111,7 @@ export default function Dashboard() {
 
 	return (
 		<>
+			<CreaeteProfileModal />
 			<CategoryStats usersStats={userStats} />
 			<button onClick={() => supabase.auth.signOut()}>Wyloguj</button>
 		</>
