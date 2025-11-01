@@ -1,14 +1,26 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import {
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+	type Dispatch,
+	type SetStateAction,
+} from "react";
 import supabase from "../../../utils/supabase";
 import { AuthContext } from "../../../context/auth.context";
 import { useNavigate, useSearchParams } from "react-router";
 import randomUsername from "../assets/random.username.json";
 import profilePicturesFilenames from "../assets/profile.pictures.names.json";
-
 import type { userProfilesInsert } from "../create.profile.types";
-import { PROFILE_PICTURE_PATH } from "../config";
+import SelectAvatar from "./select.avatar";
 
-export default function CreaeteProfileModal() {
+export default function CreaeteProfileModal({
+	showModal,
+	setShowModal,
+}: {
+	showModal: boolean;
+	setShowModal: Dispatch<SetStateAction<boolean>>;
+}) {
 	const dialogEl = useRef<HTMLDialogElement>(null);
 	const redirect = useNavigate();
 	const { user } = useContext(AuthContext);
@@ -19,7 +31,6 @@ export default function CreaeteProfileModal() {
 		username: "",
 		profile_picture_path: "",
 	});
-	const [showModal, setShowModal] = useState(false);
 
 	useEffect(() => {
 		if (!user) {
@@ -30,18 +41,18 @@ export default function CreaeteProfileModal() {
 		(async () => {
 			const { data: profileData } = await supabase
 				.from("profiles")
-				.select("username")
+				.select("user_id")
 				.eq("user_id", user.id)
 				.limit(1)
-				.single();
+				.maybeSingle();
 
-			if (profileData?.username === "") {
-				setShowModal(true);
-			} else {
+			if (profileData?.user_id) {
 				setShowModal(false);
+			} else {
+				setShowModal(true);
 			}
 		})();
-	}, [user, redirect, urlSearchParams]);
+	}, [user, redirect, urlSearchParams, setShowModal]);
 
 	useEffect(() => {
 		const hasProfile = urlSearchParams.get("has_profile") === "true";
@@ -49,7 +60,7 @@ export default function CreaeteProfileModal() {
 		if (hasProfile) {
 			setShowModal(true);
 		}
-	}, [urlSearchParams]);
+	}, [urlSearchParams, setShowModal]);
 
 	useEffect(() => {
 		if (showModal) {
@@ -63,22 +74,22 @@ export default function CreaeteProfileModal() {
 		return null;
 	}
 
+	const handleRandomProfileCreation = async () => {
+		const userProfilePicture = getRandomProfilePicture();
+		const userUsername = getRandomUsername();
+		console.log(userProfilePicture,userUsername)
+		await handleProfileCreation(userUsername, userProfilePicture);
+	};
+
 	const handleProfileCreation = async (
-		e:
-			| React.FormEvent<HTMLFormElement>
-			| React.MouseEvent<HTMLButtonElement, MouseEvent>
+		username: string,
+		profilePicturePath: string
 	) => {
-		e.preventDefault();
-
-		const { username, profile_picture_path } = userProfileData;
-
-		const { error } = await supabase
-			.from("profiles")
-			.update({
-				username: username,
-				profile_picture_path: profile_picture_path || "",
-			})
-			.eq("user_id", user.id);
+		const { error } = await supabase.from("profiles").insert({
+			username: username,
+			profile_picture_path: profilePicturePath,
+			user_id: user.id,
+		});
 
 		if (error) {
 			console.error(error);
@@ -87,11 +98,7 @@ export default function CreaeteProfileModal() {
 		setShowModal(false);
 	};
 
-	const setRandomUsername = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {
-		e.preventDefault();
-
+	const getRandomUsername = () => {
 		let randomUsernameIndex: number;
 
 		do {
@@ -102,17 +109,10 @@ export default function CreaeteProfileModal() {
 			randomUsername[randomUsernameIndex] === userProfileData.username
 		);
 
-		setUserProfileData((prev) => ({
-			...prev,
-			username: randomUsername[randomUsernameIndex],
-		}));
+		return randomUsername[randomUsernameIndex];
 	};
 
-	const setRandomProfilePicture = (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {
-		e.preventDefault();
-
+	const getRandomProfilePicture = () => {
 		let randomProfilePictureIndex: number;
 
 		do {
@@ -124,42 +124,25 @@ export default function CreaeteProfileModal() {
 			userProfileData.profile_picture_path
 		);
 
-		setUserProfileData((prev) => ({
-			...prev,
-			profile_picture_path:
-				profilePicturesFilenames[randomProfilePictureIndex],
-		}));
+		return profilePicturesFilenames[randomProfilePictureIndex];
 	};
 
 	return (
 		<dialog ref={dialogEl}>
 			<h3>Stwórz swój własny profil!</h3>
-			<form onSubmit={(e) => handleProfileCreation(e)}>
-				{profilePicturesFilenames.map((filename) => (
-					<>
-						<label htmlFor={"profile-picture-" + filename}>
-							<img
-								src={PROFILE_PICTURE_PATH + filename}
-								alt={filename.replace(".webp", "")}
-							/>
-						</label>
-						<input
-							type="radio"
-							name="profile-picture"
-							checked={
-								userProfileData.profile_picture_path ===
-								filename
-							}
-							onChange={() =>
-								setUserProfileData((prev) => ({
-									...prev,
-									profile_picture_path: filename,
-								}))
-							}
-							id={"profile-picture-" + filename}
-						/>
-					</>
-				))}
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					handleProfileCreation(
+						userProfileData.username,
+						userProfileData.profile_picture_path as string
+					);
+				}}
+			>
+				<SelectAvatar
+					userProfileData={userProfileData}
+					setUserProfileData={setUserProfileData}
+				/>
 
 				<label htmlFor="username">Nazwa użytkownika</label>
 				<input
@@ -177,20 +160,31 @@ export default function CreaeteProfileModal() {
 					}
 					value={userProfileData.username}
 				/>
-				<button onClick={(e) => setRandomUsername(e)}>
+				<button
+					type="button"
+					onClick={() =>
+						setUserProfileData((prev) => ({
+							...prev,
+							username: getRandomUsername(),
+						}))
+					}
+				>
 					losowa nazwa
 				</button>
-				<button onClick={(e) => setRandomProfilePicture(e)}>
-					losowy avater
+				<button
+					type="button"
+					onClick={() =>
+						setUserProfileData((prev) => ({
+							...prev,
+							profile_picture_path: getRandomProfilePicture(),
+						}))
+					}
+				>
+					losowy avatar
 				</button>
 
 				<button type="submit">Stwórz</button>
-				<button
-					onClick={(e) => {
-						setRandomUsername(e);
-						handleProfileCreation(e);
-					}}
-				>
+				<button type="button" onClick={handleRandomProfileCreation}>
 					Wyjdź (wygeneruj losowo)
 				</button>
 			</form>

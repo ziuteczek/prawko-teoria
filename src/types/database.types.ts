@@ -70,19 +70,19 @@ export type Database = {
       }
       profiles: {
         Row: {
-          profile_picture_path: string | null
+          profile_picture_path: string
           subscription_expires_at: string | null
           user_id: string
           username: string
         }
         Insert: {
-          profile_picture_path?: string | null
+          profile_picture_path: string
           subscription_expires_at?: string | null
           user_id: string
           username: string
         }
         Update: {
-          profile_picture_path?: string | null
+          profile_picture_path?: string
           subscription_expires_at?: string | null
           user_id?: string
           username?: string
