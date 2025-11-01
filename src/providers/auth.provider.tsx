@@ -1,13 +1,7 @@
-import { createContext, useEffect, useState, type ReactNode } from "react";
-import type { authData } from "../types/global.types";
+import type { User, Session } from "@supabase/supabase-js";
+import { useEffect, useState, type ReactNode } from "react";
 import supabase from "../utils/supabase";
-import type { Session, User } from "@supabase/supabase-js";
-
-export const AuthContext = createContext<authData>({
-	user: null,
-	session: null,
-	loading: false,
-});
+import { AuthContext } from "../context/auth.context";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
 	const [user, setUser] = useState<User | null>(null);

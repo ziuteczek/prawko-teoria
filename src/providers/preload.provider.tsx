@@ -1,11 +1,6 @@
-import { createContext, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { PreloadContext } from "../context/preload.context";
 import type { questionDataPromise } from "../types/questions.types";
-import type { preloadObj } from "../types/global.types";
-
-export const PreloadContext = createContext<preloadObj>({
-	preloadData: null,
-	setPreloadData: null,
-});
 
 export function PreloadProvider({ children }: { children: ReactNode }) {
 	const [preloadData, setPreloadData] = useState<questionDataPromise[]>([]);

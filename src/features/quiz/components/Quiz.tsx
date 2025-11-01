@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { PreloadContext } from "../../../context/preload";
+import { PreloadContext } from "../../../context/preload.context";
 import type { possibleCorrectAnswers } from "../../../types/questions.types";
-import { AuthContext } from "../../../context/auth";
+import { AuthContext } from "../../../context/auth.context";
 import MediaEl from "./MediaEl";
 import ConfirmBtn from "./ConfirmBtn";
 import AnswersBtns from "./AnswersBtns";
@@ -31,8 +31,11 @@ export default function Quiz() {
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
-		preloadData || []
+		preloadData || [],
+		selectedAnswer
 	);
+
+	const wasPlayingRef = useRef<boolean>(false);
 
 	useEffect(() => {
 		if (!user) {
@@ -60,14 +63,24 @@ export default function Quiz() {
 	}, [quizStage, nextQuestion, reset]);
 
 	useEffect(() => {
+		if (quizStage !== "reading") {
+			wasPlayingRef.current = isVideoPlaying;
+			return;
+		}
+
 		if (isVideoPlaying) {
-			reset(15);
+			reset();
 			pause();
+		} else {
+			if (wasPlayingRef.current) {
+				setQuizStage("answering");
+			} else {
+				resume();
+			}
 		}
-		if (!isVideoPlaying) {
-			resume();
-		}
-	}, [isVideoPlaying, pause, reset, resume]);
+
+		wasPlayingRef.current = isVideoPlaying;
+	}, [isVideoPlaying, quizStage, pause, resume, reset]);
 
 	return (
 		<>

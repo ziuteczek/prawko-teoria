@@ -1,17 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { questionData } from "../types";
-import type { questionDataPromise } from "../../../types/questions.types";
+import type {
+	possibleCorrectAnswers,
+	questionDataPromise,
+} from "../../../types/questions.types";
 import { QUESTIONS_TO_QUEUE } from "../../../config/questions";
 import { getPendingQuestions } from "../../../utils/questions";
 import promisifyQuestion from "../utility/promisifyQuestion";
+import supabase from "../../../utils/supabase";
 
 export default function useQuestion(
 	userID: string,
 	categoryID: number,
-	preloadedQuestions: questionDataPromise[] = []
+	preloadedQuestions: questionDataPromise[] = [],
+	selectedAnswer: possibleCorrectAnswers | null
 ) {
 	const questionQueueData = useRef<questionDataPromise[]>([]);
 	const isQuestionLoading = useRef<boolean>(false);
+	const currentlyUploadedAnswers = useRef<number[]>([]);
+
+	const isFristQuestion = useRef<boolean>(true);
+
+	const usersAnswer = useRef<possibleCorrectAnswers | null>(selectedAnswer);
 
 	const [currQuestion, setCurrQuestion] = useState<questionData>({
 		questionID: 0,
@@ -28,6 +38,10 @@ export default function useQuestion(
 		}
 	}, [preloadedQuestions]);
 
+	useEffect(() => {
+		usersAnswer.current = selectedAnswer;
+	}, [selectedAnswer]);
+
 	const updateQueque = useCallback(async () => {
 		//prettier-ignore
 		const questionsToQueue = QUESTIONS_TO_QUEUE - questionQueueData.current.length;
@@ -42,7 +56,10 @@ export default function useQuestion(
 			userID,
 			categoryID,
 			questionsToQueue,
-			questionQueueData.current.map((q) => q.questionID)
+			[
+				...questionQueueData.current.map((q) => q.questionID),
+				...currentlyUploadedAnswers.current,
+			]
 		);
 
 		const questions = pendingQuestions.map((q) => promisifyQuestion(q));
@@ -53,6 +70,34 @@ export default function useQuestion(
 
 		isQuestionLoading.current = false;
 	}, [userID, categoryID]);
+
+	const sendAnswer = useCallback(
+		async (
+			questionAnsweredID: number,
+			answer: possibleCorrectAnswers | null
+		) => {
+			currentlyUploadedAnswers.current = [
+				...currentlyUploadedAnswers.current,
+				questionAnsweredID,
+			];
+
+			const { error } = await supabase.from("answers").insert({
+				answer: answer,
+				profile_id: userID,
+				question_id: questionAnsweredID,
+			});
+
+			if (error) {
+				throw new Error(error?.message);
+			}
+
+			currentlyUploadedAnswers.current =
+				currentlyUploadedAnswers.current.filter(
+					(qId) => qId !== questionAnsweredID
+				);
+		},
+		[userID]
+	);
 
 	const nextQuestion = useCallback(async () => {
 		const questionsPromise = questionQueueData.current.map(
@@ -79,7 +124,13 @@ export default function useQuestion(
 				questionQueueData.current[questionMediaLoadedIndex],
 			];
 		}
-		questionQueueData.current.pop();
+		const questionAnsweredID = questionQueueData.current.pop()?.questionID;
+
+		if (questionAnsweredID && !isFristQuestion.current) {
+			sendAnswer(questionAnsweredID, usersAnswer.current);
+		}
+
+		isFristQuestion.current = false;
 
 		// eslint-disable-next-line
 		const { media: _, ...question } = questionMediaLoaded;
@@ -95,7 +146,7 @@ export default function useQuestion(
 		updateQueque();
 
 		setCurrQuestion(question);
-	}, [updateQueque, setCurrQuestion]);
+	}, [updateQueque, setCurrQuestion, sendAnswer]);
 
 	return {
 		currQuestion,

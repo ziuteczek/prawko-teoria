@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/auth";
+import { AuthContext } from "../../context/auth.context";
 import { Link, useNavigate } from "react-router";
 import { useInView } from "react-intersection-observer";
-import { PreloadContext } from "../../context/preload";
+import { PreloadContext } from "../../context/preload.context";
 import supabase from "../../utils/supabase";
 import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
 import type { Database } from "../../types/database.types";
