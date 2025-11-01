@@ -8,6 +8,7 @@ import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
 import type { Database } from "../../types/database.types";
 import { getPendingQuestions } from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
+import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
 
 type userCategoryStats =
 	Database["public"]["Functions"]["get_profile_question_stats"]["Returns"];
@@ -80,6 +81,7 @@ export default function Dashboard() {
 	const [userStats, setUserStats] = useState<userCategoryStats>([]);
 	const { user } = useContext(AuthContext);
 	const redirect = useNavigate();
+	const [createProfileModal, setCreateProfileModal] = useState(false);
 
 	useEffect(() => {
 		if (!user) {
@@ -102,7 +104,7 @@ export default function Dashboard() {
 				setUserStats(data);
 				localStorage.setItem("user-stats", JSON.stringify(data));
 			});
-	}, [user, redirect]);
+	}, [user, redirect, createProfileModal]);
 
 	if (!user) {
 		return null;
@@ -110,6 +112,10 @@ export default function Dashboard() {
 
 	return (
 		<>
+			<CreaeteProfileModal
+				showModal={createProfileModal}
+				setShowModal={setCreateProfileModal}
+			/>
 			<CategoryStats usersStats={userStats} />
 			<button onClick={() => supabase.auth.signOut()}>Wyloguj</button>
 		</>

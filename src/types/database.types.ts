@@ -42,7 +42,7 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "answer_question_id_fkey"
@@ -70,19 +70,22 @@ export type Database = {
       }
       profiles: {
         Row: {
-          id: string
+          profile_picture_path: string
           subscription_expires_at: string | null
-          username: string | null
+          user_id: string
+          username: string
         }
         Insert: {
-          id: string
+          profile_picture_path: string
           subscription_expires_at?: string | null
-          username?: string | null
+          user_id: string
+          username: string
         }
         Update: {
-          id?: string
+          profile_picture_path?: string
           subscription_expires_at?: string | null
-          username?: string | null
+          user_id?: string
+          username?: string
         }
         Relationships: []
       }
