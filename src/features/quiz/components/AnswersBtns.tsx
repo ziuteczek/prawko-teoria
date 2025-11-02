@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import type {
 	possibleCorrectAnswers,
 	questionAnswers,
@@ -52,7 +52,7 @@ export default function AnswersBtns({
 	}, [setSelectedAnswer, quizStage]);
 
 	return possibleAnswers.map(({ code, content }) => (
-		<React.Fragment key={code}>
+		<Fragment key={code}>
 			<label
 				htmlFor={code}
 				style={getAnswerStyle(quizStage, code, correctAnswer)}
@@ -67,6 +67,6 @@ export default function AnswersBtns({
 				disabled={quizStage === "explanation"}
 				onChange={() => setSelectedAnswer(code)}
 			/>
-		</React.Fragment>
+		</Fragment>
 	));
 }

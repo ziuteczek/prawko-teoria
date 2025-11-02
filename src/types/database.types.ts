@@ -18,21 +18,18 @@ export type Database = {
         Row: {
           answer: string | null
           created_at: string
-          id: number
           profile_id: string
           question_id: number
         }
         Insert: {
           answer?: string | null
           created_at?: string
-          id?: number
           profile_id: string
           question_id: number
         }
         Update: {
           answer?: string | null
           created_at?: string
-          id?: number
           profile_id?: string
           question_id?: number
         }
@@ -219,31 +216,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_profile_question_stats: {
-        Args: { p_profile_id: string }
-        Returns: {
-          category_id: number
-          category_title: string
-          known_questions: number
-          undiscovered_questions: number
-          unknown_questions: number
-        }[]
-      }
-      get_quiz_questions: {
+      get_incorrect_or_unanswered_questions: {
         Args: {
-          pCategoryId: number
-          pIgnoreIds?: number[]
-          pLimit?: number
-          pProfileId: string
+          p_category_id: number
+          p_limit: number
+          p_profile_id: string
+          p_question_ignore: number[]
         }
         Returns: {
+          answer: string
           answerA: string
           answerB: string
           answerC: string
           categoryId: number
-          categoryName: string
           content: string
           correctAnswer: string
+          createdAt: string
           deAnswerA: string
           deAnswerB: string
           deAnswerC: string
@@ -253,13 +241,24 @@ export type Database = {
           engAnswerC: string
           engQuestion: string
           explanation: string
+          id: number
           media: string
+          profileId: string
           questionId: number
           uaAnswerA: string
           uaAnswerB: string
           uaAnswerC: string
           uaQuestion: string
-          userAnswer: string
+        }[]
+      }
+      get_user_stats: {
+        Args: { p_user_id: string }
+        Returns: {
+          categoryId: number
+          categoryTitle: string
+          correctAnswers: number
+          incorrectAnswers: number
+          totalQuestions: number
         }[]
       }
       is_active_subscriber: { Args: never; Returns: boolean }

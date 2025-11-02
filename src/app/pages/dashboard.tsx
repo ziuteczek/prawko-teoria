@@ -10,8 +10,8 @@ import { getPendingQuestions } from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
 import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
 
-type userCategoryStats =
-	Database["public"]["Functions"]["get_profile_question_stats"]["Returns"];
+export type userCategoryStats =
+	Database["public"]["Functions"]["get_user_stats"]["Returns"];
 
 const getUserLocalStats = (): userCategoryStats | undefined => {
 	const userStatsString = localStorage.getItem("user-stats");
@@ -39,7 +39,7 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 		const preloadQuestions = async () => {
 			const questionsRaw = await getPendingQuestions(
 				user.id,
-				userStat.category_id,
+				userStat.categoryId,
 				QUESTIONS_TO_PRELOAD
 			);
 
@@ -53,17 +53,22 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 			]);
 		};
 		preloadQuestions();
-	}, [inView, setPreloadData, user, userStat.category_id]);
+	}, [inView, setPreloadData, user, userStat.categoryId]);
 
 	return (
 		<div ref={ref}>
-			<h3>{userStat.category_title}</h3>
-			<p>Pytania znane: {userStat.known_questions}</p>
-			<p>Pytania nieznane: {userStat.unknown_questions}</p>
-			<p>Pytania nieodkryte: {userStat.undiscovered_questions}</p>
+			<h3>{userStat.categoryTitle}</h3>
+			<p>Pytania znane: {userStat.correctAnswers}</p>
+			<p>Pytania nieznane: {userStat.incorrectAnswers}</p>
+			<p>
+				Pytania nieodkryte:{" "}
+				{userStat.totalQuestions -
+					userStat.incorrectAnswers -
+					userStat.correctAnswers}
+			</p>
 			<Link
-				to={`/quiz?category_id=${userStat.category_id}`}
-				state={{ categoryID: userStat.category_id }}
+				to={`/quiz?category_id=${userStat.categoryId}`}
+				state={{ categoryID: userStat.categoryId }}
 			>
 				Start
 			</Link>
@@ -73,7 +78,7 @@ function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
 
 function CategoryStats({ usersStats }: { usersStats: userCategoryStats }) {
 	return usersStats.map((userStat) => (
-		<CategoryStat userStat={userStat} key={userStat.category_id} />
+		<CategoryStat userStat={userStat} key={userStat.categoryId} />
 	));
 }
 
@@ -95,7 +100,7 @@ export default function Dashboard() {
 		}
 
 		supabase
-			.rpc("get_profile_question_stats", { p_profile_id: user.id })
+			.rpc("get_user_stats", { p_user_id: user.id })
 			.then(({ data, error }) => {
 				if (error) {
 					throw new Error(error.message);
