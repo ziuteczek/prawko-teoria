@@ -1,7 +1,6 @@
-import { Fragment } from "react/jsx-runtime";
-import { PROFILE_PICTURE_PATH } from "../config";
-
 import profilePicturesFilenames from "../assets/profile.pictures.names.json";
+import { Fragment } from "react/jsx-runtime";
+import { PROFILE_PICTURE_PATH } from "../../../config/cloud.storage";
 import type { userProfilesInsert } from "../create.profile.types";
 import type { Dispatch, SetStateAction } from "react";
 
