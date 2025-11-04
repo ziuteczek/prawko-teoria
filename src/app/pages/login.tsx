@@ -30,7 +30,7 @@ export default function Login() {
 	};
 
 	return (
-		<form onSubmit={(e) => handleLogin(e)}>
+		<form onSubmit={(e) => handleLogin(e)} data-testid="register-form">
 			<label htmlFor="email">email</label>
 			<input
 				id="email"
