@@ -81,11 +81,12 @@ export default function Register() {
 	};
 
 	return (
-		<form onSubmit={registerUser}>
+		<form onSubmit={registerUser} data-testid="register-form">
 			<label htmlFor="email">email</label>
 			<input
 				type="email"
 				name="email"
+				id="email"
 				value={registerData.email}
 				onChange={handleChange}
 			/>
@@ -94,15 +95,17 @@ export default function Register() {
 			<input
 				type="password"
 				name="password"
+				id="password"
 				value={registerData.password}
 				onChange={handleChange}
 			/>
 
 			{getPasswordsMatchingEl()}
-			<label htmlFor="passwordConfirmation">hasło ponownie</label>
+			<label htmlFor="password-repeat">hasło ponownie</label>
 			<input
 				type="password"
 				name="passwordConfirmation"
+				id="password-repeat"
 				value={registerData.passwordConfirmation}
 				onChange={handleChange}
 			/>
