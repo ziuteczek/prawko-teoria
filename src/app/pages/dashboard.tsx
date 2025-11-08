@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/auth.context";
+import AuthContext from "../../context/auth.context";
 import { Link, useNavigate } from "react-router";
 import { useInView } from "react-intersection-observer";
 import { PreloadContext } from "../../context/preload.context";
 import supabase from "../../utils/supabase";
 import { QUESTIONS_TO_PRELOAD } from "../../config/questions";
 import type { Database } from "../../types/database.types";
-import { getPendingQuestions } from "../../utils/questions";
+import getPendingQuestions from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
 import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
 
@@ -26,7 +26,11 @@ const getUserLocalStats = (): userCategoryStats | undefined => {
 	}
 };
 
-function CategoryStat({ userStat }: { userStat: userCategoryStats[number] }) {
+export function CategoryStat({
+	userStat,
+}: {
+	userStat: userCategoryStats[number];
+}) {
 	const { ref, inView } = useInView({ triggerOnce: true });
 	const { user } = useContext(AuthContext);
 	const { setPreloadData } = useContext(PreloadContext);

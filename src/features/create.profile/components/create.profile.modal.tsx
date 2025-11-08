@@ -7,7 +7,7 @@ import {
 	type SetStateAction,
 } from "react";
 import supabase from "../../../utils/supabase";
-import { AuthContext } from "../../../context/auth.context";
+import  AuthContext  from "../../../context/auth.context";
 import { useNavigate, useSearchParams } from "react-router";
 import randomUsername from "../assets/random.username.json";
 import profilePicturesFilenames from "../assets/profile.pictures.names.json";
