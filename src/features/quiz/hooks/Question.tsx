@@ -5,7 +5,7 @@ import type {
 	questionDataPromise,
 } from "../../../types/questions.types";
 import { QUESTIONS_TO_QUEUE } from "../../../config/questions";
-import { getPendingQuestions } from "../../../utils/questions";
+import getPendingQuestions from "../../../utils/questions";
 import promisifyQuestion from "../utility/promisifyQuestion";
 import supabase from "../../../utils/supabase";
 
@@ -63,10 +63,7 @@ export default function useQuestion(
 		);
 
 		const questions = pendingQuestions.map((q) => promisifyQuestion(q));
-		questionQueueData.current = [
-			...questionQueueData.current,
-			...questions,
-		];
+		questionQueueData.current = [...questionQueueData.current, ...questions];
 
 		isQuestionLoading.current = false;
 	}, [userID, categoryID]);

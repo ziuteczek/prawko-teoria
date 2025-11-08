@@ -1,8 +1,11 @@
 import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
 
-afterEach(() => cleanup());
+afterEach(() => {
+	cleanup();
+	vi.clearAllMocks();
+});
 
 export const correctEmail = "example@email.com";
-	export const correntPassword = "GoodPassword123@";
+export const correntPassword = "GoodPassword123@";

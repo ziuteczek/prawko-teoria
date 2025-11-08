@@ -9,7 +9,7 @@ export default function Register() {
 		password: "",
 		passwordConfirmation: "",
 	});
-
+	
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setRegisterData((prev) => ({

@@ -1,6 +1,6 @@
 import supabase from "./supabase";
 
-export async function getPendingQuestions(
+export default async function getPendingQuestions(
 	userId: string,
 	categoryID: number,
 	limit: number = 5,
