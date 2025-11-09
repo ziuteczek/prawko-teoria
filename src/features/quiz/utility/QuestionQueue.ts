@@ -60,7 +60,7 @@ export default class QuestionQueue {
 
 	async getNextQuestion(questionsToIgnore: number[] = []) {
 		if (this.#data.length === 0) {
-			this.#updateQueue();
+			await this.#updateQueue();
 		}
 
 		const questionsPromise = this.#data.map(
