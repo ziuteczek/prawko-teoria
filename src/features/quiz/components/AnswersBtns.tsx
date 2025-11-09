@@ -8,7 +8,7 @@ import type { QuizStage } from "../types";
 const getAnswerStyle = (
 	quizStage: QuizStage,
 	elsAnswer: possibleCorrectAnswers,
-	correctAnswer: possibleCorrectAnswers
+	correctAnswer: possibleCorrectAnswers | undefined
 ) => {
 	return {
 		backgroundColor:
@@ -31,7 +31,7 @@ export default function AnswersBtns({
 		React.SetStateAction<possibleCorrectAnswers | null>
 	>;
 	quizStage: QuizStage;
-	correctAnswer: possibleCorrectAnswers;
+	correctAnswer: possibleCorrectAnswers | undefined;
 }) {
 	const possibleAnswersCodes: possibleCorrectAnswers[] = answers
 		? ["A", "B", "C"]
