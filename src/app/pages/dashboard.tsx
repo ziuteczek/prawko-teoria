@@ -53,7 +53,9 @@ export function CategoryStat({
 
 			setPreloadData((data) => [
 				...data,
-				...questionsRaw.map((q) => promisifyQuestion(q)),
+				...questionsRaw
+					.filter((q) => !data.map((q) => q.id).includes(q.id))
+					.map((q) => promisifyQuestion(q)),
 			]);
 		};
 		preloadQuestions();

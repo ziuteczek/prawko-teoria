@@ -1,8 +1,12 @@
-import type { possibleCorrectAnswers, questionDataPromise } from "../../../types/questions.types";
+import type {
+	possibleCorrectAnswers,
+	questionsRaw,
+} from "../../../types/questions.types";
 import { getCloudMedia } from "../../../utils/getMedia";
-import type { questionsRaw } from "../../../utils/questions";
 
-export function getMediaType(src?: string | null): questionDataPromise["mediaType"] {
+type mediaTypes = "image" | "video" | "none";
+
+export function getMediaType(src?: string | null): mediaTypes {
 	if (src?.endsWith(".webp")) {
 		return "image";
 	} else if (src?.endsWith(".webm")) {
@@ -12,9 +16,7 @@ export function getMediaType(src?: string | null): questionDataPromise["mediaTyp
 	}
 }
 
-export default function promisifyQuestion(
-	question: questionsRaw
-): questionDataPromise {
+export default function promisifyQuestion(question: questionsRaw) {
 	const questionPossibleAnswers = question.answerA
 		? {
 				answerA: question.answerA,
@@ -24,21 +26,20 @@ export default function promisifyQuestion(
 		: undefined;
 
 	const {
-		answerA,
-		answerB,
-		answerC,
-		questionId,
-		categoryId,
-		...questionDataPromise
+		/* eslint-disable */
+		answerA: _,
+		answerB: __,
+		answerC: ___,
+		...questionPromisified
+		/* eslint-enable */
 	} = {
 		...question,
-		questionID: question.questionId,
-		categoryID: question.categoryId,
 		media: getCloudMedia(question.media) as Promise<Blob>,
 		mediaType: getMediaType(question.media),
 		correctAnswer: question.correctAnswer as possibleCorrectAnswers,
 		answers: questionPossibleAnswers,
 	};
 
-	return questionDataPromise;
+	return questionPromisified;
 }
+export type questionDataPromise = ReturnType<typeof promisifyQuestion>;

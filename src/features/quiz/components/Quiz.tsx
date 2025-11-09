@@ -12,96 +12,108 @@ import useQuestion from "../hooks/Question";
 import type { QuizStage } from "../types";
 
 export default function Quiz() {
-  const redirect = useNavigate();
-  const [searchParams] = useSearchParams();
+	const redirect = useNavigate();
+	const [searchParams] = useSearchParams();
 
-  const currCategoryIDStr = searchParams.get("category_id");
-  const quizCategoryID = Number(currCategoryIDStr);
+	const currCategoryIDStr = searchParams.get("category_id");
+	const quizCategoryID = Number(currCategoryIDStr);
 
-  const { user } = useContext(AuthContext);
-  const { preloadData } = useContext(PreloadContext);
+	const { user } = useContext(AuthContext);
+	const { preloadData, setPreloadData } = useContext(PreloadContext);
 
-  const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
-  const [selectedAnswer, setSelectedAnswer] =
-    useState<possibleCorrectAnswers | null>(null);
+	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
+	const [selectedAnswer, setSelectedAnswer] =
+		useState<possibleCorrectAnswers | null>(null);
+	const selectedAnswerRef = useRef<possibleCorrectAnswers | null>(null);
 
-  const [quizStage, setQuizStage] = useState<QuizStage>("reading");
+	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
-  const { isFinished, seconds, reset, pause, resume } = useCountdown(15);
-  const { currQuestion, nextQuestion } = useQuestion(
-    user?.id || "",
-    quizCategoryID,
-    preloadData || [],
-    selectedAnswer
-  );
+	const { isFinished, seconds, reset, pause, resume } = useCountdown(15);
+	const { currQuestion, nextQuestion } = useQuestion(
+		user?.id || "",
+		quizCategoryID,
+		preloadData?.filter((q) => q.categoryId === quizCategoryID) || []
+	);
 
-  const wasPlayingRef = useRef<boolean>(false);
+	const wasPlayingRef = useRef<boolean>(false);
 
-  useEffect(() => {
-    if (!user) {
-      redirect("/");
-    }
-  }, [user, redirect]);
+	useEffect(() => {
+		if (!user) {
+			redirect("/");
+		}
+	}, [user, redirect]);
 
-  useEffect(() => {
-    if (!isFinished) return;
+	useEffect(() => {
+		selectedAnswerRef.current = selectedAnswer;
+	}, [selectedAnswer]);
 
-    setQuizStage((prev) => {
-      if (prev === "reading") return "answering";
-      if (prev === "answering") return "explanation";
-      return "reading";
-    });
-  }, [isFinished]);
+	useEffect(() => {
+		if (!isFinished) return;
 
-  useEffect(() => {
-    if (quizStage === "reading") {
-      reset(15);
-      nextQuestion();
-    } else if (quizStage === "answering") {
-      reset(15);
-    }
-  }, [quizStage, nextQuestion, reset]);
+		setQuizStage((prev) => {
+			if (prev === "reading") return "answering";
+			if (prev === "answering") return "explanation";
+			return "explanation";
+		});
+	}, [isFinished]);
 
-  useEffect(() => {
-    if (quizStage !== "reading") {
-      wasPlayingRef.current = isVideoPlaying;
-      return;
-    }
+	useEffect(() => {
+		if (quizStage === "reading") {
+			reset(15);
+			nextQuestion(selectedAnswerRef.current || "");
+		} else if (quizStage === "answering") {
+			reset(15);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [quizStage]);
 
-    if (isVideoPlaying) {
-      reset();
-      pause();
-    } else {
-      if (wasPlayingRef.current) {
-        setQuizStage("answering");
-      } else {
-        resume();
-      }
-    }
+	useEffect(() => {
+		if (quizStage !== "reading") {
+			wasPlayingRef.current = isVideoPlaying;
+			return;
+		}
 
-    wasPlayingRef.current = isVideoPlaying;
-  }, [isVideoPlaying, quizStage, pause, resume, reset]);
+		if (isVideoPlaying) {
+			reset();
+			pause();
+		} else {
+			if (wasPlayingRef.current) {
+				setQuizStage("answering");
+			} else {
+				resume();
+			}
+		}
 
-  return (
-    <>
-      <MediaEl
-        src={currQuestion.mediaSrc}
-        mediaType={currQuestion.mediaType}
-        quizStage={quizStage}
-        isVideoPlaying={isVideoPlaying}
-        setIsVideoPlaying={setIsVideoPlaying}
-      />
-      <p>{currQuestion.content}</p>
-      <ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
-      <AnswersBtns
-        answers={currQuestion.answers}
-        selectedAnswer={selectedAnswer}
-        setSelectedAnswer={setSelectedAnswer}
-        quizStage={quizStage}
-        correctAnswer={currQuestion.correctAnswer}
-      />
-      <p>Czas na {quizStage}</p>
-      <Timer seconds={seconds} quizStage={quizStage} />
-    </>
-  );
+		wasPlayingRef.current = isVideoPlaying;
+	}, [isVideoPlaying, quizStage, pause, resume, reset]);
+
+	useEffect(() => {
+		if (setPreloadData) {
+			// setPreloadData([]);
+		}
+	}, [setPreloadData]);
+
+	return (
+		<>
+			<MediaEl
+				src={currQuestion?.mediaSrc}
+				mediaType={currQuestion?.mediaType || "none"}
+				quizStage={quizStage}
+				isVideoPlaying={isVideoPlaying}
+				setIsVideoPlaying={setIsVideoPlaying}
+			/>
+			<p>{currQuestion?.content}</p>
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
+			<AnswersBtns
+				answers={currQuestion?.answers}
+				selectedAnswer={selectedAnswer}
+				setSelectedAnswer={setSelectedAnswer}
+				quizStage={quizStage}
+				correctAnswer={currQuestion?.correctAnswer}
+			/>
+			<p>Czas na {quizStage}</p>
+			<p>{quizStage === "explanation" && currQuestion?.explanation}</p>
+			<Timer seconds={seconds} quizStage={quizStage} />
+		</>
+	);
 }

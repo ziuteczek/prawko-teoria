@@ -262,6 +262,10 @@ export type Database = {
         }[]
       }
       is_active_subscriber: { Args: never; Returns: boolean }
+      upsert_answer: {
+        Args: { p_answer: string; p_profile_id: string; p_question_id: number }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

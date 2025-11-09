@@ -1,13 +1,6 @@
-import type { questionAnswers, possibleCorrectAnswers } from "../../types/questions.types";
+import type { questionDataPromise } from "./utility/promisifyQuestion";
 
-export interface questionData {
-	questionID: number;
-	categoryID: number;
-	categoryName: string;
-	content: string;
-	mediaType: "video" | "image" | "none";
+export interface questionData extends questionDataPromise {
 	mediaSrc?: string;
-	answers?: questionAnswers;
-	correctAnswer: possibleCorrectAnswers;
 }
 export type QuizStage = "reading" | "answering" | "explanation";

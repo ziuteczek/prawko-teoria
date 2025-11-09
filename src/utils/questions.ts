@@ -23,7 +23,3 @@ export default async function getPendingQuestions(
 
 	return data;
 }
-
-export type questionsRaw = Awaited<
-	ReturnType<typeof getPendingQuestions>
->[number];

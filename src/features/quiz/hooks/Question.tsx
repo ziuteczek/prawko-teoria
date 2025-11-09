@@ -1,149 +1,70 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { questionData } from "../types";
-import type {
-	possibleCorrectAnswers,
-	questionDataPromise,
-} from "../../../types/questions.types";
-import { QUESTIONS_TO_QUEUE } from "../../../config/questions";
-import getPendingQuestions from "../../../utils/questions";
-import promisifyQuestion from "../utility/promisifyQuestion";
+
+import { type questionDataPromise } from "../utility/promisifyQuestion";
+import QuestionQueue from "../utility/QuestionQueue";
 import supabase from "../../../utils/supabase";
 
 export default function useQuestion(
-	userID: string,
+	userId: string,
 	categoryID: number,
-	preloadedQuestions: questionDataPromise[] = [],
-	selectedAnswer: possibleCorrectAnswers | null
+	preloadedQuestions: questionDataPromise[] = []
 ) {
-	const questionQueueData = useRef<questionDataPromise[]>([]);
-	const isQuestionLoading = useRef<boolean>(false);
-	const currentlyUploadedAnswers = useRef<number[]>([]);
+	const questionQueueData = useRef<questionData[]>([]);
+	const questionQueueRef = useRef<QuestionQueue | null>(null);
 
-	const isFristQuestion = useRef<boolean>(true);
-
-	const usersAnswer = useRef<possibleCorrectAnswers | null>(selectedAnswer);
-
-	const [currQuestion, setCurrQuestion] = useState<questionData>({
-		questionID: 0,
-		categoryID: 0,
-		categoryName: "",
-		content: "",
-		mediaType: "none",
-		correctAnswer: "N",
-	});
+	const [currQuestion, setCurrQuestion] = useState<questionData | null>(null);
+	const currQuestionRef = useRef<questionData | null>(null);
 
 	useEffect(() => {
-		if (preloadedQuestions.length > 0) {
-			questionQueueData.current = preloadedQuestions;
-		}
-	}, [preloadedQuestions]);
+		currQuestionRef.current = currQuestion;
+	}, [currQuestion]);
 
 	useEffect(() => {
-		usersAnswer.current = selectedAnswer;
-	}, [selectedAnswer]);
-
-	const updateQueque = useCallback(async () => {
-		//prettier-ignore
-		const questionsToQueue = QUESTIONS_TO_QUEUE - questionQueueData.current.length;
-
-		if (isQuestionLoading.current || questionsToQueue <= 0) {
+		if (questionQueueRef.current) {
 			return;
 		}
 
-		isQuestionLoading.current = true;
-
-		const pendingQuestions = await getPendingQuestions(
-			userID,
+		questionQueueRef.current = new QuestionQueue(
+			userId,
 			categoryID,
-			questionsToQueue,
-			[
-				...questionQueueData.current.map((q) => q.questionID),
-				...currentlyUploadedAnswers.current,
-			]
+			preloadedQuestions
 		);
+	}, [categoryID, userId, preloadedQuestions]);
 
-		const questions = pendingQuestions.map((q) => promisifyQuestion(q));
-		questionQueueData.current = [...questionQueueData.current, ...questions];
+	useEffect(() => {
+		questionQueueData.current = preloadedQuestions;
+	}, [preloadedQuestions]);
 
-		isQuestionLoading.current = false;
-	}, [userID, categoryID]);
-
-	const sendAnswer = useCallback(
-		async (
-			questionAnsweredID: number,
-			answer: possibleCorrectAnswers | null
-		) => {
-			currentlyUploadedAnswers.current = [
-				...currentlyUploadedAnswers.current,
-				questionAnsweredID,
-			];
-
-			const { error } = await supabase.from("answers").insert({
-				answer: answer,
-				profile_id: userID,
-				question_id: questionAnsweredID,
-			});
-
-			if (error) {
-				throw new Error(error?.message);
+	const nextQuestion = useCallback(
+		async (usersAnswer: string) => {
+			if (!questionQueueRef.current) {
+				return;
 			}
 
-			currentlyUploadedAnswers.current =
-				currentlyUploadedAnswers.current.filter(
-					(qId) => qId !== questionAnsweredID
-				);
+			if (currQuestionRef.current) {
+				const questionId = currQuestionRef.current.id;
+
+				const { error } = await supabase.rpc("upsert_answer", {
+					p_answer: usersAnswer,
+					p_profile_id: userId,
+					p_question_id: questionId,
+				});
+
+				if (error) {
+					throw new Error(error.message);
+				}
+
+				questionQueueRef.current.confirmAnswering(questionId);
+			}
+
+			const nextQuestion =
+				await questionQueueRef.current?.getNextQuestion();
+
+			setCurrQuestion(nextQuestion);
 		},
-		[userID]
+		[userId]
 	);
-
-	const nextQuestion = useCallback(async () => {
-		const questionsPromise = questionQueueData.current.map(
-			(question) =>
-				new Promise<questionDataPromise>((resolve) => {
-					question.media.then(() => {
-						resolve(question);
-					});
-				})
-		);
-
-		const questionMediaLoaded = await Promise.any(questionsPromise);
-
-		//prettier-ignore
-		const questionMediaLoadedIndex = questionQueueData.current.indexOf(questionMediaLoaded);
-		const lastQuestionIndex = questionQueueData.current.length - 1;
-
-		{
-			[
-				questionQueueData.current[questionMediaLoadedIndex],
-				questionQueueData.current[lastQuestionIndex],
-			] = [
-				questionQueueData.current[lastQuestionIndex],
-				questionQueueData.current[questionMediaLoadedIndex],
-			];
-		}
-		const questionAnsweredID = questionQueueData.current.pop()?.questionID;
-
-		if (questionAnsweredID && !isFristQuestion.current) {
-			sendAnswer(questionAnsweredID, usersAnswer.current);
-		}
-
-		isFristQuestion.current = false;
-
-		// eslint-disable-next-line
-		const { media: _, ...question } = questionMediaLoaded;
-
-		const questionMedia = await questionMediaLoaded.media;
-
-		if (questionMedia) {
-			question.mediaSrc = URL.createObjectURL(questionMedia);
-		} else {
-			question.mediaSrc = undefined;
-		}
-
-		updateQueque();
-
-		setCurrQuestion(question);
-	}, [updateQueque, setCurrQuestion, sendAnswer]);
 
 	return {
 		currQuestion,
