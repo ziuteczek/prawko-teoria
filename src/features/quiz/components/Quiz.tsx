@@ -24,6 +24,7 @@ export default function Quiz() {
 	const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(false);
 	const [selectedAnswer, setSelectedAnswer] =
 		useState<possibleCorrectAnswers | null>(null);
+	const selectedAnswerRef = useRef<possibleCorrectAnswers | null>(null);
 
 	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
@@ -43,6 +44,10 @@ export default function Quiz() {
 	}, [user, redirect]);
 
 	useEffect(() => {
+		selectedAnswerRef.current = selectedAnswer;
+	}, [selectedAnswer]);
+
+	useEffect(() => {
 		if (!isFinished) return;
 
 		setQuizStage((prev) => {
@@ -55,7 +60,7 @@ export default function Quiz() {
 	useEffect(() => {
 		if (quizStage === "reading") {
 			reset(15);
-			nextQuestion();
+			nextQuestion(selectedAnswerRef.current || "");
 		} else if (quizStage === "answering") {
 			reset(15);
 		}

@@ -6,7 +6,9 @@ import promisifyQuestion from "./promisifyQuestion";
 export default class QuestionQueue {
 	#userId: string;
 	#categoryId: number;
+
 	#data: questionDataPromise[] = [];
+	#waitingForAnswers: number[] = [];
 
 	#isQuestionLoading = false;
 
@@ -36,7 +38,11 @@ export default class QuestionQueue {
 			this.#userId,
 			this.#categoryId,
 			questionsToQueue,
-			[...this.#data.map((q) => q.id), ...questionsToIgnore]
+			[
+				...this.#data.map((q) => q.id),
+				...questionsToIgnore,
+				...this.#waitingForAnswers,
+			]
 		);
 
 		const questions = pendingQuestions.map((q) => promisifyQuestion(q));
@@ -44,6 +50,12 @@ export default class QuestionQueue {
 		this.#data = [...this.#data, ...questions];
 
 		this.#isQuestionLoading = false;
+	}
+
+	confirmAnswering(id: number) {
+		this.#waitingForAnswers = this.#waitingForAnswers.filter(
+			(qId) => qId !== id
+		);
 	}
 
 	async getNextQuestion(questionsToIgnore: number[] = []) {
@@ -63,6 +75,10 @@ export default class QuestionQueue {
 		const questionMediaLoaded = await Promise.any(questionsPromise);
 
 		this.#data = this.#data.filter((q) => questionMediaLoaded.id !== q.id);
+		this.#waitingForAnswers = [
+			...this.#waitingForAnswers,
+			questionMediaLoaded.id,
+		];
 
 		const questionMedia = await questionMediaLoaded.media;
 		const mediaSrc = questionMedia
