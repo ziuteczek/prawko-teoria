@@ -52,7 +52,7 @@ export default function useQuestion(
 				});
 
 				if (error) {
-					throw new Error(error.message);
+					return { error };
 				}
 
 				questionQueueRef.current.confirmAnswering(questionId);
