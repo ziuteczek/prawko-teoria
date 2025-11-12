@@ -216,6 +216,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      extend_user_subscription: {
+        Args: { p_days: number; p_profile_id: string }
+        Returns: undefined
+      }
       get_incorrect_or_unanswered_questions: {
         Args: {
           p_category_id: number

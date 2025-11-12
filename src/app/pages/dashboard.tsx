@@ -9,6 +9,7 @@ import type { Database } from "../../types/database.types";
 import getPendingQuestions from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
 import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
+import redirectToCheckout from "../../features/payments/api/redirectToCheckout";
 
 export type userCategoryStats =
 	Database["public"]["Functions"]["get_user_stats"]["Returns"];
@@ -129,6 +130,17 @@ export default function Dashboard() {
 			/>
 			<CategoryStats usersStats={userStats} />
 			<button onClick={() => supabase.auth.signOut()}>Wyloguj</button>
+			<button
+				onClick={() =>
+					redirectToCheckout(
+						"price_1SRe2qEypKlccoWcicZmIdUu",
+						user.id,
+						"dymnystanek@gmail.com"
+					)
+				}
+			>
+				kup
+			</button>
 		</>
 	);
 }
