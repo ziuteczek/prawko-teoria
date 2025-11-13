@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_requests: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          profile_id: string | null
+          response_id: string
+          text: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          id?: string
+          profile_id?: string | null
+          response_id: string
+          text: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          profile_id?: string | null
+          response_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       answers: {
         Row: {
           answer: string | null
@@ -216,6 +251,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      extend_user_subscription: {
+        Args: { p_days: number; p_profile_id: string }
+        Returns: undefined
+      }
       get_incorrect_or_unanswered_questions: {
         Args: {
           p_category_id: number

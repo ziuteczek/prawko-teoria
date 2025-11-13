@@ -11,6 +11,7 @@ import Timer from "./Timer";
 import useQuestion from "../hooks/Question";
 import type { QuizStage } from "../types";
 import NoAnswerBtn from "./NoAnswerBtn";
+import AiAssistance from "./AiAssistance";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -93,7 +94,7 @@ export default function Quiz() {
 
 	useEffect(() => {
 		if (setPreloadData) {
-			// setPreloadData([]);
+			setPreloadData([]);
 		}
 	}, [setPreloadData]);
 
@@ -120,6 +121,7 @@ export default function Quiz() {
 				setQuizStage={setQuizStage}
 				setSelectedAnswer={setSelectedAnswer}
 			/>
+			<AiAssistance questionId={currQuestion?.id} quizStage={quizStage} />
 			<p>Czas na {quizStage}</p>
 			<p>{quizStage === "explanation" && currQuestion?.explanation}</p>
 			<Timer seconds={seconds} quizStage={quizStage} />
