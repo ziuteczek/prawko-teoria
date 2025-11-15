@@ -19,25 +19,28 @@ export type Database = {
           cost: number
           created_at: string
           id: string
-          profile_id: string | null
+          profile_id: string
+          question_id: number
           response_id: string
-          text: string
+          user_question: string
         }
         Insert: {
           cost: number
           created_at?: string
           id?: string
-          profile_id?: string | null
+          profile_id: string
+          question_id: number
           response_id: string
-          text: string
+          user_question: string
         }
         Update: {
           cost?: number
           created_at?: string
           id?: string
-          profile_id?: string | null
+          profile_id?: string
+          question_id?: number
           response_id?: string
-          text?: string
+          user_question?: string
         }
         Relationships: [
           {
@@ -46,6 +49,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "ai_requests_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
           },
         ]
       }

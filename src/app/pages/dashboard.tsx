@@ -86,6 +86,7 @@ function CategoryStats({ usersStats }: { usersStats: userCategoryStats }) {
 	return usersStats.map((userStat) => (
 		<CategoryStat userStat={userStat} key={userStat.categoryId} />
 	));
+	supabase.from("ai_requests").insert({cost: 5,profile_id: "",question_id: 3,response_id: "","user_question": "Wytłumacz zasadę dokładniej"})
 }
 
 export default function Dashboard() {
