@@ -8,7 +8,7 @@ Includes **practice quizzes**, **lessons**, and (soon) **AI assistance** and **m
 ## 🚀 Features
 - 🧠 **Interactive Quizzes** – Practice real exam-style questions  
 - 📚 **Lessons** – Learn the theory step-by-step *(coming soon)*
-- 🤖 **AI Assistance** *(coming soon)* – Ask for explanations or hints  
+- 🤖 **AI Assistance** – Ask for explanations or hints  
 - 🧾 **Mock Tests** *(coming soon)* – Simulate the real exam
 
 ***More coming soon***
