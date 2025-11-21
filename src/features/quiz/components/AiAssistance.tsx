@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import supabase from "../../../utils/supabase";
 import type { QuizStage } from "../types";
+import AuthContext from "../../../context/auth.context";
 
 export default function AiAssistance({
 	questionId,
@@ -12,6 +13,32 @@ export default function AiAssistance({
 	const [text, setText] = useState<string>("");
 	const [userQuestion, setUserQuestion] = useState<string>("");
 	const [loading, setIsLoading] = useState<boolean>(false);
+	const [requestsLeft, setRequestsLeft] = useState<number | null>(null);
+
+	const typingIntervalRef = useRef<number | null>(null);
+	const randomLoadingStageIntervalRef = useRef<number | null>(null);
+
+	const { user } = useContext(AuthContext);
+
+	useEffect(() => {
+		if (!user) {
+			return;
+		}
+
+		(async () => {
+			const { data: reqLeft, error } = await supabase.rpc(
+				"ai_request_count_last_month",
+				{ p_profile_id: user.id }
+			);
+
+			if (error) {
+				console.error(error);
+				return;
+			}
+
+			setRequestsLeft(150 - reqLeft);
+		})();
+	}, [user]);
 
 	const handleHelpRequest = async () => {
 		setIsLoading(true);
@@ -32,7 +59,7 @@ export default function AiAssistance({
 			"główkowanie na pełnych obrotach",
 		];
 
-		const randomLoadingStageInterval = setInterval(() => {
+		randomLoadingStageIntervalRef.current = setInterval(() => {
 			const stageIndex = Math.floor(Math.random() * loadingStages.length);
 			setUserQuestion(loadingStages[stageIndex]);
 		}, 1000);
@@ -44,7 +71,8 @@ export default function AiAssistance({
 			},
 		});
 
-		clearInterval(randomLoadingStageInterval);
+		clearInterval(randomLoadingStageIntervalRef.current);
+		randomLoadingStageIntervalRef.current = null;
 
 		if (error) {
 			console.error(error);
@@ -56,24 +84,24 @@ export default function AiAssistance({
 
 		setText(outputTextArr[0]);
 
-		const typingInterval = setInterval(() => {
+		typingIntervalRef.current = setInterval(() => {
 			setText((prev) => {
 				const currTextWordArr = prev.split(" ");
 				const currTextWordCount = currTextWordArr.length;
 
-				if (outputText.length === prev.length) {
-					clearInterval(typingInterval);
+				if (outputText.length === prev.length && typingIntervalRef.current) {
+					clearInterval(typingIntervalRef.current);
 				}
 
-				return [
-					...currTextWordArr,
-					outputTextArr[currTextWordCount],
-				].join(" ");
+				return [...currTextWordArr, outputTextArr[currTextWordCount]].join(" ");
 			});
 		}, 100);
 
-		setUserQuestion("");
+		clearInterval(typingIntervalRef.current);
+		typingIntervalRef.current = null;
 
+		setUserQuestion("");
+		setRequestsLeft((prev) => prev && prev--);
 		setIsLoading(false);
 	};
 
@@ -104,11 +132,8 @@ export default function AiAssistance({
 					>
 						Pomoc AI
 					</button>
-					{text && (
-						<button onClick={() => resetHelpRequest()}>
-							reset
-						</button>
-					)}
+					{text && <button onClick={() => resetHelpRequest()}>reset</button>}
+					{requestsLeft && <p>Pozostało {requestsLeft} zapytań</p>}
 					<p>{text}</p>
 				</>
 			) : (

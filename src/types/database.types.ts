@@ -261,6 +261,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ai_request_count_last_month: {
+        Args: { p_profile_id: string }
+        Returns: number
+      }
       extend_user_subscription: {
         Args: { p_days: number; p_profile_id: string }
         Returns: undefined
