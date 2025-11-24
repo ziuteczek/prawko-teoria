@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+npm-debug.log
+
+# Build output
+dist/
+
+# Environment files
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Testing
+tests/
+*.test.*
+*.spec.*
+__tests__/
+coverage/
