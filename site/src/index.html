@@ -48,7 +48,7 @@
 							<a class="nav-link" href="#pricing">Cennik</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link">Kontakt</a>
+							<a class="nav-link" href="#contact">Kontakt</a>
 						</li>
 					</ul>
 				</div>
@@ -658,7 +658,7 @@
 			</div>
 		</section>
 
-		<section class="ftco-section bg-body-secondary py-5">
+		<section class="ftco-section bg-body-secondary py-5" id="contact">
 			<div class="container">
 				<div class="row justify-content-center">
 					<div class="col-md-6 text-center mb-5">
@@ -700,6 +700,7 @@
 														<input
 															type="text"
 															class="form-control"
+															required
 															name="name"
 															id="name"
 															placeholder="Nazwa firmy lub imię i nazwisko"
@@ -711,6 +712,7 @@
 														<label
 															class="label"
 															for="email"
+															
 															>Email</label
 														>
 														<input
@@ -718,6 +720,7 @@
 															class="form-control"
 															name="email"
 															id="email"
+															required
 															placeholder="Twój email"
 														/>
 													</div>
@@ -733,6 +736,7 @@
 															type="text"
 															class="form-control"
 															name="subject"
+															required
 															id="subject"
 															placeholder="Temat wiadomości"
 														/>
@@ -751,6 +755,7 @@
 															id="message"
 															cols="30"
 															rows="4"
+															required
 															placeholder="Twoja wiadomość ..."
 														></textarea>
 													</div>
@@ -854,7 +859,7 @@
 					<div class="col-md-6 col-12 text-center text-md-start">
 						<span
 							>© <span class="current-year"></span>&nbsp;Prawko
-							Teoria. All Rights Reserved.</span
+							Teoria. Wszystkie prawa zastrzeżone.</span
 						>
 					</div>
 					<!-- Links -->
@@ -862,10 +867,20 @@
 						<nav
 							class="nav nav-footer justify-content-center justify-content-md-end"
 						>
-							<a class="nav-link active ps-0" href="#">Privacy</a>
-							<a class="nav-link" href="#">Terms </a>
-							<a class="nav-link" href="#">Feedback</a>
-							<a class="nav-link" href="#">Support</a>
+							<a
+								class="nav-link active ps-0"
+								href="public/policy.txt"
+								target="_blank"
+								>Polityka prywatności</a
+							>
+							<a
+								class="nav-link"
+								href="public/terms.txt"
+								target="_blank"
+								>Terms
+							</a>
+							<a class="nav-link" href="#contact">Feedback</a>
+							<a class="nav-link" href="#contact">Support</a>
 						</nav>
 					</div>
 				</div>

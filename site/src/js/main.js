@@ -12,6 +12,9 @@ emailJs.init({ publicKey: "07SD-PGGed1yctGgp" });
 
 const form = document.querySelector("form");
 
+const formSendingFailHtml = `<div class="alert alert-danger">Błąd podczas wysyłania formularza</div>`;
+const formSendingSuccesHtml = `<div class="alert alert-success">Formularz został wysłany pomyślnie</div>`;
+
 form.addEventListener("submit", async function (e) {
 	e.preventDefault();
 
@@ -22,7 +25,11 @@ form.addEventListener("submit", async function (e) {
 			this
 		);
 		console.log(res);
+		form.reset();
+
+		form.insertAdjacentHTML("beforebegin", formSendingSuccesHtml);
 	} catch (err) {
 		console.error(err);
+        form.insertAdjacentHTML("beforebegin", formSendingFailHtml);
 	}
 });
