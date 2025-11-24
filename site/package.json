@@ -1,0 +1,26 @@
+{
+	"name": "site",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "vite",
+		"start": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"devDependencies": {
+		"sass": "^1.94.2",
+		"vite": "^7.2.4"
+	},
+	"dependencies": {
+		"@emailjs/browser": "^4.4.1",
+		"@popperjs/core": "^2.11.8",
+		"bootstrap": "^5.3.8"
+	}
+}
