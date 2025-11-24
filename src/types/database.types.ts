@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_requests: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          profile_id: string
+          question_id: number
+          response_id: string
+          user_question: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          id?: string
+          profile_id: string
+          question_id: number
+          response_id: string
+          user_question: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          profile_id?: string
+          question_id?: number
+          response_id?: string
+          user_question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "ai_requests_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       answers: {
         Row: {
           answer: string | null
@@ -216,6 +261,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ai_request_count_last_month: {
+        Args: { p_profile_id: string }
+        Returns: number
+      }
+      extend_user_subscription: {
+        Args: { p_days: number; p_profile_id: string }
+        Returns: undefined
+      }
       get_incorrect_or_unanswered_questions: {
         Args: {
           p_category_id: number

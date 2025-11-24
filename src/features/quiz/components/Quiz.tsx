@@ -10,6 +10,8 @@ import { useCountdown } from "../hooks/Countdown";
 import Timer from "./Timer";
 import useQuestion from "../hooks/Question";
 import type { QuizStage } from "../types";
+import NoAnswerBtn from "./NoAnswerBtn";
+import AiAssistance from "./AiAssistance";
 
 export default function Quiz() {
 	const redirect = useNavigate();
@@ -60,12 +62,15 @@ export default function Quiz() {
 	useEffect(() => {
 		if (quizStage === "reading") {
 			reset(15);
-			nextQuestion(selectedAnswerRef.current || "");
+			nextQuestion(selectedAnswerRef.current || "").then((result) => {
+				if (result?.error) {
+					console.error("Error sending an answer", result.error);
+				}
+			});
 		} else if (quizStage === "answering") {
 			reset(15);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [quizStage]);
+	}, [quizStage, reset, nextQuestion]);
 
 	useEffect(() => {
 		if (quizStage !== "reading") {
@@ -89,7 +94,7 @@ export default function Quiz() {
 
 	useEffect(() => {
 		if (setPreloadData) {
-			// setPreloadData([]);
+			setPreloadData([]);
 		}
 	}, [setPreloadData]);
 
@@ -111,6 +116,12 @@ export default function Quiz() {
 				quizStage={quizStage}
 				correctAnswer={currQuestion?.correctAnswer}
 			/>
+			<NoAnswerBtn
+				quizStage={quizStage}
+				setQuizStage={setQuizStage}
+				setSelectedAnswer={setSelectedAnswer}
+			/>
+			<AiAssistance questionId={currQuestion?.id} quizStage={quizStage} />
 			<p>Czas na {quizStage}</p>
 			<p>{quizStage === "explanation" && currQuestion?.explanation}</p>
 			<Timer seconds={seconds} quizStage={quizStage} />
