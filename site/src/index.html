@@ -4,7 +4,13 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Prawko Teoria</title>
-		<script type="module" src="./js/main.js"></script>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+			crossorigin="anonymous"
+		/>
+		<script src="./js/main.js" type="module" defer></script>
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
@@ -64,15 +70,14 @@
 								>
 							</h1>
 							<p class="lead mb-4">
-								Ucz się szybciej i zdawaj
-								<span class="fw-bold">za pierwszym razem!</span>
-								<br />
-								Nasza aplikacja oferuje komplet
-								<span class="fw-bold">aktualnych testów</span>
-								egzaminacyjnych, praktyczne kursy teoretyczne,
-								wsparcie AI, statystyki postępów oraz tryb
-								powtórek błędów. Wszystko w jednym miejscu,
-								zawsze pod ręką — na telefonie lub komputerze.
+								Aplikacja oferuje
+								<string class="fw-bold"
+									>aktualne testy egzaminacyjne</string
+								>, kursy teoretyczne,
+								<span class="fw-bold">wsparcie AI</span>,
+								statystyki postępów i tryb powtórek błędów —
+								wszystko w jednym miejscu, na telefonie i
+								komputerze.
 							</p>
 							<ul class="list-unstyled mb-5">
 								<li class="mb-2">
@@ -118,7 +123,7 @@
 											d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"
 										></path>
 									</svg>
-									<span class="ms-2">Wsparcie AI</span>
+									<span class="ms-2">Asystent AI</span>
 								</li>
 								<li class="mb-2">
 									<svg
@@ -137,7 +142,9 @@
 										><span class="fw-bold">Prawdziwe</span>
 										pytania egzaminacyjne
 										<span class="fst-italic"
-											>(2025)</span
+											>(<span class="current-year"
+												>2025</span
+											>)</span
 										></span
 									>
 								</li>
@@ -650,5 +657,219 @@
 				</div>
 			</div>
 		</section>
+
+		<section class="ftco-section bg-body-secondary py-5">
+			<div class="container">
+				<div class="row justify-content-center">
+					<div class="col-md-6 text-center mb-5">
+						<h2 class="heading-section">Skontaktuj się z nami</h2>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-md-12">
+						<div class="wrapper">
+							<div class="row no-gutters">
+								<div
+									class="col-lg-8 col-md-7 order-md-last d-flex align-items-stretch"
+								>
+									<div class="contact-wrap w-100 p-md-5 p-4">
+										<h3 class="mb-4">
+											Zostaw nam wiadomość
+										</h3>
+										<div
+											id="form-message-warning"
+											class="mb-4"
+										></div>
+
+										<form
+											method="POST"
+											id="contactForm"
+											name="contactForm"
+											class="contactForm"
+											novalidate="novalidate"
+										>
+											<div class="row">
+												<div class="col-md-6">
+													<div class="form-group">
+														<label
+															class="label"
+															for="name"
+															>Imię i
+															nazwisko</label
+														>
+														<input
+															type="text"
+															class="form-control"
+															name="name"
+															id="name"
+															placeholder="Nazwa firmy lub imię i nazwisko"
+														/>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">
+														<label
+															class="label"
+															for="email"
+															>Email</label
+														>
+														<input
+															type="email"
+															class="form-control"
+															name="email"
+															id="email"
+															placeholder="Twój email"
+														/>
+													</div>
+												</div>
+												<div class="col-md-12">
+													<div class="form-group">
+														<label
+															class="label"
+															for="subject"
+															>Temat</label
+														>
+														<input
+															type="text"
+															class="form-control"
+															name="subject"
+															id="subject"
+															placeholder="Temat wiadomości"
+														/>
+													</div>
+												</div>
+												<div class="col-md-12">
+													<div class="form-group">
+														<label
+															class="label"
+															for="#"
+															>Wiadomość</label
+														>
+														<textarea
+															name="message"
+															class="form-control"
+															id="message"
+															cols="30"
+															rows="4"
+															placeholder="Twoja wiadomość ..."
+														></textarea>
+													</div>
+												</div>
+												<div class="col-md-12">
+													<div class="form-group">
+														<button
+															type="submit"
+															class="btn btn-primary mt-3"
+														>
+															Wyślij
+														</button>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+								<div
+									class="col-lg-4 col-md-5 d-flex align-items-stretch text-white"
+								>
+									<div
+										class="info-wrap bg-primary w-100 p-md-5 p-4"
+									>
+										<h3>Dane kontaktowe</h3>
+										<p class="mb-4">
+											Masz pewne wątpliwości?
+											<span class="fw-bold"
+												>Jesteś szkołą jazdy</span
+											>
+											i chciałbyś zapytać się o
+											<span class="fw-bold"
+												>indywidualną wycenę?</span
+											>
+											Skontaktuj się z nami!
+										</p>
+										<div
+											class="dbox w-100 d-flex align-items-center"
+										>
+											<div
+												class="icon d-flex align-items-center justify-content-center"
+											>
+												<img
+													src="./assets/phone.svg"
+													alt="phone icon"
+													height="40px"
+													width="40px"
+													class="me-2 align-text-top"
+												/>
+											</div>
+											<div class="">
+												<p>
+													<span>Telefon:</span>
+													<a
+														href="tel:+48728533533"
+														class="link-light link-info"
+														>+48 728 533 533</a
+													>
+												</p>
+											</div>
+										</div>
+										<div
+											class="dbox w-100 d-flex align-items-center"
+										>
+											<div
+												class="icon d-flex align-items-center justify-content-center"
+											>
+												<img
+													src="./assets/mail.svg"
+													alt="phone icon"
+													height="40px"
+													width="40px"
+													class="me-2 align-text-top"
+												/>
+											</div>
+											<div class="text pl-3">
+												<p>
+													<span>Email:</span>
+													<a
+														href="mailto:prawko-teoria@protonmail.com"
+														class="text-white"
+														>prawko-teoria@protonmail.com</a
+													>
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<footer class="footer bg-dark-subtle">
+			<div class="container">
+				<div class="row align-items-center g-0 border-top py-2">
+					<!-- Desc -->
+					<div class="col-md-6 col-12 text-center text-md-start">
+						<span
+							>© <span class="current-year"></span>&nbsp;Prawko
+							Teoria. All Rights Reserved.</span
+						>
+					</div>
+					<!-- Links -->
+					<div class="col-12 col-md-6">
+						<nav
+							class="nav nav-footer justify-content-center justify-content-md-end"
+						>
+							<a class="nav-link active ps-0" href="#">Privacy</a>
+							<a class="nav-link" href="#">Terms </a>
+							<a class="nav-link" href="#">Feedback</a>
+							<a class="nav-link" href="#">Support</a>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
