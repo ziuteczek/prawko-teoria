@@ -1,7 +1,4 @@
 import emailJs from "@emailjs/browser";
-// import "../scss/styles.scss";
-
-// import * as bootstrap from "bootstrap";
 
 const currYearEl = document.querySelectorAll(".current-year");
 const currYear = new Date().getFullYear();
