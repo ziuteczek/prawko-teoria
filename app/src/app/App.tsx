@@ -8,6 +8,7 @@ import { AuthProvider } from "../providers/auth.provider";
 import { PreloadProvider } from "../providers/preload.provider";
 import "../styles/global.css"
 import MainLaout from "../features/layout/components/MainLayout";
+import Logout from "./pages/logout";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/quiz" element={<Quiz />} />
+                                <Route path="/logout" element={<Logout/>} />
                             </Route>
                         </Routes>
                     </BrowserRouter>

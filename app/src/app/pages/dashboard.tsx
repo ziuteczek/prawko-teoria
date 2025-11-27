@@ -9,6 +9,12 @@ import type { Database } from "../../types/database.types";
 import getPendingQuestions from "../../utils/questions";
 import promisifyQuestion from "../../features/quiz/utility/promisifyQuestion";
 import CreaeteProfileModal from "../../features/create.profile/components/create.profile.modal";
+import "react-circular-progressbar/dist/styles.css";
+import {
+	buildStyles,
+	CircularProgressbar,
+	CircularProgressbarWithChildren,
+} from "react-circular-progressbar";
 
 export type userCategoryStats =
 	Database["public"]["Functions"]["get_user_stats"]["Returns"];
@@ -25,6 +31,69 @@ const getUserLocalStats = (): userCategoryStats | undefined => {
 		return;
 	}
 };
+
+function StatCirlcle({
+	inView,
+	totalQuestions,
+	correctAnswers,
+	incorrectAnswers,
+}: {
+	inView: boolean;
+	totalQuestions: number;
+	correctAnswers: number;
+	incorrectAnswers: number;
+}) {
+	const undiscoveredCount =
+		totalQuestions - incorrectAnswers - correctAnswers;
+
+	const incorrectPercentage = (incorrectAnswers / totalQuestions) * 100;
+	const correctPercentage = (correctAnswers / totalQuestions) * 100;
+	const undiscoveredPercentage = (undiscoveredCount / totalQuestions) * 100;
+
+	return (
+		<CircularProgressbarWithChildren
+			value={inView ? 40 : 0}
+			strokeWidth={10}
+			text="21/204"
+			className="cursor-grab delay-500"
+			styles={{
+				...buildStyles({
+					pathTransitionDuration: 2,
+					trailColor: "transparent",
+					pathColor: "red",
+					strokeLinecap: "butt",
+					textColor: "#333",
+				}),
+			}}
+		>
+			<CircularProgressbarWithChildren
+				value={inView ? 30 : 0}
+				strokeWidth={10}
+				className="cursor-pointer"
+				styles={buildStyles({
+					pathTransitionDuration: 2,
+					trailColor: "transparent",
+					pathColor: "green",
+					strokeLinecap: "butt",
+					rotation: 0.4,
+				})}
+			>
+				<CircularProgressbar
+					value={inView ? 40 : 0}
+					strokeWidth={10}
+					className="cursor-pointer"
+					styles={buildStyles({
+						trailColor: "transparent",
+						pathTransitionDuration: 2,
+						rotation: 0.6,
+						pathColor: "#ccc",
+						strokeLinecap: "butt",
+					})}
+				></CircularProgressbar>
+			</CircularProgressbarWithChildren>
+		</CircularProgressbarWithChildren>
+	);
+}
 
 export function CategoryStat({
 	userStat,
@@ -62,22 +131,27 @@ export function CategoryStat({
 	}, [inView, setPreloadData, user, userStat.categoryId]);
 
 	return (
-		<div ref={ref}>
-			<h3>{userStat.categoryTitle}</h3>
-			<p>Pytania znane: {userStat.correctAnswers}</p>
-			<p>Pytania nieznane: {userStat.incorrectAnswers}</p>
-			<p>
-				Pytania nieodkryte:{" "}
-				{userStat.totalQuestions -
-					userStat.incorrectAnswers -
-					userStat.correctAnswers}
-			</p>
-			<Link
-				to={`/quiz?category_id=${userStat.categoryId}`}
-				state={{ categoryID: userStat.categoryId }}
-			>
-				Start
-			</Link>
+		<div ref={ref} className="flex items-center">
+			<div>
+				<h3>{userStat.categoryTitle}</h3>
+				<p>Pytania znane: {userStat.correctAnswers}</p>
+				<p>Pytania nieznane: {userStat.incorrectAnswers}</p>
+				<p>
+					Pytania nieodkryte:{" "}
+					{userStat.totalQuestions -
+						userStat.incorrectAnswers -
+						userStat.correctAnswers}
+				</p>
+				<Link
+					to={`/quiz?category_id=${userStat.categoryId}`}
+					state={{ categoryID: userStat.categoryId }}
+				>
+					Start
+				</Link>
+			</div>
+			<div className="w-28">
+				<StatCirlcle inView={inView} />
+			</div>
 		</div>
 	);
 }

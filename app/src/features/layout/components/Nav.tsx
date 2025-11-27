@@ -5,6 +5,7 @@ import settingsIcon from "../assets/settings-icon.svg";
 import learningIcon from "../assets/learning-icon.svg";
 import logOutIcon from "../assets/log-out-icon.svg";
 import { useState } from "react";
+import { Link } from "react-router";
 
 function NavLink({
 	text,
@@ -19,7 +20,7 @@ function NavLink({
 }) {
 	return (
 		<li className="">
-			<a href={link} className="flex justify-between items-center">
+			<Link to={link} className="flex justify-between items-center">
 				<div className="size-6 mr-5 ml-1 flex-none">
 					<img src={img} alt="" className="" />
 				</div>
@@ -28,21 +29,15 @@ function NavLink({
 				>
 					{text}
 				</span>
-			</a>
+			</Link>
 		</li>
 	);
 }
 
 export default function NavBar() {
-	const [isExtended, setIsExtended] = useState(false);
-
 	return (
 		<nav
-			className={`fixed overflow-clip pr-10 bg-neutral-100 rounded-br-2xl rounded-tr-2xl h-[90svh] top-[5svh] flex flex-col border border-neutral-400 ${
-				isExtended ? "w-fit" : "w-15"
-			}`}
-			onMouseOver={()=>setIsExtended(true)}
-			onMouseOut={()=>setIsExtended(false)}
+			className={`fixed overflow-clip pr-10 bg-neutral-100 rounded-br-2xl rounded-tr-2xl h-[90svh] top-[5svh] flex flex-col border border-neutral-400 w-15 hover:w-auto transition-all duration-300`}
 		>
 			<div className="ml-3.5 mr-3.5 h-full">
 				{/* Top icons  */}
@@ -72,10 +67,14 @@ export default function NavBar() {
 							img={settingsIcon}
 							link="#"
 						/>
-					</div>	
+					</div>
 
 					<div className="mb-40">
-						<NavLink text="" img={logOutIcon} link="#"/>
+						<NavLink
+							text="wyloguj"
+							img={logOutIcon}
+							link="/logout"
+						/>
 					</div>
 				</ul>
 			</div>
