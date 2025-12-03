@@ -6,7 +6,7 @@ export default function MainLaout() {
 	return (
 		<div className="flex">
 			<NavBar />
-			<main className="ml-22">
+			<main className="ml-18">
 				<Outlet />
 			</main>
 		</div>
