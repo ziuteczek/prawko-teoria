@@ -1,48 +1,46 @@
 # 🏎️ Prawko Teoria
 
-A **web app** to help you prepare for the **driving license theory exam**.  
-Includes **practice quizzes**, **lessons**, and (soon) **AI assistance** and **mock tests**.
+A **web app** that helps you prepare for the **driving license theory exam**.  
+It includes **practice quizzes**, **lessons**, and soon **AI assistance** and **mock tests**.
 
 ---
 
 ## 🚀 Features
 - 🧠 **Interactive Quizzes** – Practice real exam-style questions  
-- 📚 **Lessons** – Learn the theory step-by-step *(coming soon)*
-- 🤖 **AI Assistance** – Ask for explanations or hints  
-- 🧾 **Mock Tests** *(coming soon)* – Simulate the real exam
+- 📚 **Lessons** – Learn the theory step-by-step *(coming soon)*  
+- 🤖 **AI Assistance** – Get explanations and hints  
+- 🧾 **Mock Tests** *(coming soon)* – Simulate the real exam environment  
 
-***More coming soon***
+***More features coming soon***
 
 ---
 
-## Implementation
+## 🧩 Implementation
 
-- ⚡ **Question Queue** – All questions and media are preloaded into browser memory for fast performance  
-- 🔑 **Google & Facebook Login** – Secure and easy authentication with social media accounts  
+- ⚡ **Question Queue** – All questions and media are preloaded into memory for lightning-fast performance  
+- 🔑 **Google & Facebook Login** – Secure and simple authentication  
+- 🤖 **OpenAI API** – Provides explanations, analyzes images, and answers users’ questions  
 
-***More coming soon***
+***More improvements coming soon***
+
+---
 
 ## 🛠️ Tech Stack
 
 **Backend:**  
-- 🗄️ [Supabase](https://supabase.com/) – Database & Authentication  
+- 🗄️ [Supabase](https://supabase.com/) – Database & authentication  
 - ☁️ Google Cloud – Media storage  
 
 **Frontend:**  
 - ⚛️ [React](https://react.dev/) + [Vite](https://vitejs.dev/) – Main app interface  
-- 🪐 [Astro](https://astro.build/) – Landing / marketing page  
+- 🎨 [Vite](https://vite.dev/) + [Bootstrap](https://getbootstrap.com/) – Landing page  
 
 ---
 
 ## 🧰 Running the App
 
-### 1. Build the Docker image
+### 1. Build & run
 
 ```bash
-docker build -t prawko-teoria .
+docker compose up
 ```
-
-### 1. Run
-
-```bash
-docker run -p 3000:80 prawko-teoria
