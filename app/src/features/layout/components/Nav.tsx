@@ -75,8 +75,8 @@ export default function NavBar() {
 							Img={HomeIcon}
 							link="#"
 						/>
-						<NavLink text={"Nauka"} Img={LearningIcon} link="#" />
-						<NavLink text={"Testy"} Img={TestIcon} link="#" />
+						<NavLink text={"Lista pytań"} Img={LearningIcon} link="#" />
+						<NavLink text={"Nauka i testy"} Img={TestIcon} link="#" />
 						<NavLink
 							text={"Ustawienia"}
 							Img={SettingsIcon}
