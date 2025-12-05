@@ -62,9 +62,17 @@ export default function Dashboard() {
 				showModal={createProfileModal}
 				setShowModal={setCreateProfileModal}
 			/>
-			{userStats.map((userStat) => (
-				<CategoryStat userStat={userStat} key={userStat.categoryId} />
-			))}
+
+			<div className="flex w-svw">
+				<div className="grid grid-cols-2 gap-4">
+					{userStats.map((userStat) => (
+						<CategoryStat
+							userStat={userStat}
+							key={userStat.categoryId}
+						/>
+					))}
+				</div>
+			</div>
 		</>
 	);
 }

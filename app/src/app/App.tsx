@@ -9,6 +9,7 @@ import { PreloadProvider } from "../providers/preload.provider";
 import "../styles/global.css"
 import MainLaout from "../features/layout/components/MainLayout";
 import Logout from "./pages/logout";
+import QuestionsList from "../features/questions-list/components/page";
 
 function App() {
     return (
@@ -24,6 +25,7 @@ function App() {
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/quiz" element={<Quiz />} />
                                 <Route path="/logout" element={<Logout/>} />
+                                <Route path="/list" element={<QuestionsList/>} />
                             </Route>
                         </Routes>
                     </BrowserRouter>
