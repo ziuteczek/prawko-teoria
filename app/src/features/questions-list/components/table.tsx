@@ -3,11 +3,13 @@ import type { categoriesType, ListSettingsType, questionRow } from "./page";
 import TheadQuestionsList from "./thead";
 
 export default function QuestionsListTable({
+	listSettings,
 	questionsList,
 	categoriesList,
 	setListSettings,
 	setDisplayedQuestion,
 }: {
+	listSettings: ListSettingsType;
 	questionsList: questionRow[];
 	categoriesList: categoriesType[];
 	setListSettings: React.Dispatch<React.SetStateAction<ListSettingsType>>;
@@ -17,10 +19,14 @@ export default function QuestionsListTable({
 }) {
 	return (
 		<table className="max-w-350 w-full text-sm text-left rtl:text-right text-body">
-			<TheadQuestionsList setListSettings={setListSettings} />
+			<TheadQuestionsList
+				setListSettings={setListSettings}
+				listSettings={listSettings}
+			/>
 			<tbody>
 				{questionsList.map((q) => (
 					<QuestionListRow
+						key={q.id}
 						setDisplayedQuestion={setDisplayedQuestion}
 						questionRow={q}
 						content={q.content}

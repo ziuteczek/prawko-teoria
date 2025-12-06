@@ -82,6 +82,7 @@ export default function QuestionsList() {
 				<div className="flex gap-10">
 					<div className="relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default max-h-[85svh] flex-1">
 						<QuestionsListTable
+							listSettings={listSettings}
 							questionsList={questionsList}
 							setListSettings={setListSettings}
 							categoriesList={categoriesList}

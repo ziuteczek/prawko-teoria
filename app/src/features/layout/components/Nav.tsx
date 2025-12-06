@@ -29,7 +29,7 @@ function NavLink({
 }) {
 	return (
 		<li className="">
-			<Link to={link} className="flex justify-between items-center">
+			<Link viewTransition to={link} className="flex justify-between items-center">
 				<div className="size-6 mr-5 ml-1 flex-none">
 					{typeof Img === "string" ? (
 						<img src={Img} alt="" />
