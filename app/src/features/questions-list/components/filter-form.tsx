@@ -4,10 +4,12 @@ export default function FilterQuestionsTableForm({
 	categoriesList,
 	listSettings,
 	setListSettings,
+	nextPagePossible,
 }: {
 	categoriesList: categoriesType[];
 	listSettings: ListSettingsType;
 	setListSettings: React.Dispatch<React.SetStateAction<ListSettingsType>>;
+	nextPagePossible: boolean;
 }) {
 	return (
 		<form className="flex flex-col" onSubmit={(e) => e.preventDefault()}>
@@ -88,7 +90,7 @@ export default function FilterQuestionsTableForm({
 							page: prev.page + 1,
 						}))
 					}
-					disabled={!listSettings.nextPagePossible}
+					disabled={!nextPagePossible}
 				>
 					Następna
 				</button>

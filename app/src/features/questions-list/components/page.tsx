@@ -15,7 +15,6 @@ export type ListSettingsType = {
 	licenseCategory: string;
 	page: number;
 	limit: number;
-	nextPagePossible: boolean;
 };
 
 export default function QuestionsList() {
@@ -23,6 +22,7 @@ export default function QuestionsList() {
 	const [categoriesList, setCategoriesList] = useState<categoriesType[]>([]);
 	const [displayedQuestion, setDisplayedQuestion] =
 		useState<questionRow | null>(null);
+	const [nextPagePossible, setNextPagePossible] = useState<boolean>(false);
 	const [listSettings, setListSettings] = useState<ListSettingsType>({
 		ascending: true,
 		content: "",
@@ -30,7 +30,6 @@ export default function QuestionsList() {
 		licenseCategory: "",
 		page: 0,
 		limit: 30,
-		nextPagePossible: false,
 	});
 
 	useEffect(() => {
@@ -69,10 +68,9 @@ export default function QuestionsList() {
 				return;
 			}
 
-			setListSettings((prev) => ({
-				...prev,
-				nextPagePossible: data.length > listSettings.limit,
-			}));
+			setNextPagePossible(true);
+
+			console.log("elo");
 
 			setQuestionList(data);
 		};
@@ -100,6 +98,7 @@ export default function QuestionsList() {
 						setListSettings={setListSettings}
 						listSettings={listSettings}
 						categoriesList={categoriesList}
+						nextPagePossible={nextPagePossible}
 					/>
 				</div>
 			</div>
