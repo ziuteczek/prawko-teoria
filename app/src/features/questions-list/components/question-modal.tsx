@@ -1,5 +1,16 @@
 import { useEffect, useRef } from "react";
 import type { questionRow } from "./page";
+import { GOOGLE_CLOUD_URI } from "../../../config/cloud.storage";
+
+function MediaPlayer({ mediaSrc }: { mediaSrc: string | null | undefined }) {
+	if (mediaSrc?.endsWith(".webm")) {
+		return <video src={GOOGLE_CLOUD_URI + mediaSrc} />;
+	} else if (mediaSrc?.endsWith(".webp")) {
+		return <img src={GOOGLE_CLOUD_URI + mediaSrc} alt="" />;
+	} else {
+		return <img></img>;
+	}
+}
 
 export default function QuestionModalPresentation({
 	question,
@@ -22,9 +33,10 @@ export default function QuestionModalPresentation({
 	}, [question]);
 
 	return (
-		<dialog ref={dialogRef}>
+		<dialog ref={dialogRef} onClose={() => setDisplayedQuestion(null)}>
 			<button onClick={() => setDisplayedQuestion(null)}>X</button>
 			<p>{question?.content}</p>
+			<MediaPlayer mediaSrc={question?.media} />
 		</dialog>
 	);
 }

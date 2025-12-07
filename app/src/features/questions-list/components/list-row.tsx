@@ -19,7 +19,7 @@ export default function QuestionListRow({
 }) {
 	return (
 		<tr
-			className="bg-neutral-primary-soft border-b  border-default nth-[2n]:bg-gray-100 cursor-pointer hover:bg-stone-300 nth-[2n]:hover:bg-stone-300 transition-colors duration-50"
+			className="bg-neutral-primary-soft border-b  border-default nth-[2n]:bg-gray-200 cursor-pointer hover:bg-stone-300 nth-[2n]:hover:bg-stone-300 transition-colors duration-50"
 			onClick={() => {
 				setDisplayedQuestion(questionRow);
 			}}

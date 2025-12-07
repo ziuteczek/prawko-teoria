@@ -14,7 +14,8 @@ export type ListSettingsType = {
 	questionCategoryId: number;
 	licenseCategory: string;
 	page: number;
-	limit: 30 | 40 | 50;
+	limit: number;
+	nextPagePossible: boolean;
 };
 
 export default function QuestionsList() {
@@ -29,6 +30,7 @@ export default function QuestionsList() {
 		licenseCategory: "",
 		page: 0,
 		limit: 30,
+		nextPagePossible: false,
 	});
 
 	useEffect(() => {
@@ -46,12 +48,12 @@ export default function QuestionsList() {
 	}, [categoriesList]);
 
 	useEffect(() => {
-		const setQuestionsList = async (ascending: boolean) => {
+		const setQuestionsList = async () => {
 			const { data, error } = await supabase
 				.from("questions")
 				.select("*")
 				.like("content", `%${listSettings.content}%`)
-				.order("id", { ascending })
+				.order("id", { ascending: listSettings.ascending })
 				.or(
 					!listSettings.questionCategoryId
 						? "category_id.gte.0"
@@ -67,10 +69,15 @@ export default function QuestionsList() {
 				return;
 			}
 
-			setQuestionList([...data]);
+			setListSettings((prev) => ({
+				...prev,
+				nextPagePossible: data.length > listSettings.limit,
+			}));
+
+			setQuestionList(data);
 		};
 
-		setQuestionsList(listSettings.ascending);
+		setQuestionsList();
 	}, [listSettings]);
 
 	return (
