@@ -5,6 +5,9 @@ services:
       - "8080:80"
 
   home_page:
-    build: ./site
+    build:
+      context: ./site
+      args:
+        VITE_PAGE_URL: http://localhost:8080
     ports:
       - "8081:80"

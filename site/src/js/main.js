@@ -13,20 +13,20 @@ const formSendingFailHtml = `<div class="alert alert-danger">Błąd podczas wysy
 const formSendingSuccesHtml = `<div class="alert alert-success">Formularz został wysłany pomyślnie</div>`;
 
 form.addEventListener("submit", async function (e) {
-	e.preventDefault();
+  e.preventDefault();
 
-	try {
-		const res = await emailJs.sendForm(
-			"service_6njdcge",
-			"template_hk312am",
-			this
-		);
-		console.log(res);
-		form.reset();
+  try {
+    const res = await emailJs.sendForm(
+      "service_6njdcge",
+      "template_hk312am",
+      this
+    );
+    console.log(res);
+    form.reset();
 
-		form.insertAdjacentHTML("beforebegin", formSendingSuccesHtml);
-	} catch (err) {
-		console.error(err);
-        form.insertAdjacentHTML("beforebegin", formSendingFailHtml);
-	}
+    form.insertAdjacentHTML("beforebegin", formSendingSuccesHtml);
+  } catch (err) {
+    console.error(err);
+    form.insertAdjacentHTML("beforebegin", formSendingFailHtml);
+  }
 });
