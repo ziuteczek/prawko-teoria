@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { questionRow } from "./page";
 import { GOOGLE_CLOUD_URI } from "../../../config/cloud.storage";
+import AiAssistance from "../../quiz/components/AiAssistance";
 
 function MediaPlayer({ mediaSrc }: { mediaSrc: string | null | undefined }) {
 	if (mediaSrc?.endsWith(".webm")) {
@@ -108,6 +109,7 @@ export default function QuestionModalPresentation({
 				<MediaPlayer mediaSrc={question?.media} />
 				<QuestionAnswers question={question} />
 				<p>{question.explanation}</p>
+				<AiAssistance questionId={question.id} quizStage="explanation"/>
 			</div>
 		</dialog>
 	);

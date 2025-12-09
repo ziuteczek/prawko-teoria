@@ -34,9 +34,7 @@ export default function QuestionsList() {
 
 	useEffect(() => {
 		(async () => {
-			const { data, error } = await supabase
-				.from("categories")
-				.select("*");
+			const { data, error } = await supabase.from("categories").select("*");
 
 			if (error) {
 				return;
@@ -44,7 +42,7 @@ export default function QuestionsList() {
 
 			setCategoriesList([{ id: 0, title: "Wszystkie" }, ...data]);
 		})();
-	}, [categoriesList]);
+	}, []);
 
 	useEffect(() => {
 		const setQuestionsList = async () => {
