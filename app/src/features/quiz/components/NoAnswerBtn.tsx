@@ -17,6 +17,7 @@ export default function NoAnswerBtn({
 				setQuizStage("explanation");
 				setSelectedAnswer(null);
 			}}
+			className="bg-orange-400 uppercase text-white px-3 py-1.5 mb-3 hover:bg-orange-600 transition-colors duration-300 cursor-pointer"
 		>
 			Brak odpowiedzi
 		</button>

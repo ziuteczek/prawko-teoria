@@ -99,16 +99,39 @@ export default function Quiz() {
 	}, [setPreloadData]);
 
 	return (
-		<>
-			<MediaEl
-				src={currQuestion?.mediaSrc}
-				mediaType={currQuestion?.mediaType || "none"}
-				quizStage={quizStage}
-				isVideoPlaying={isVideoPlaying}
-				setIsVideoPlaying={setIsVideoPlaying}
-			/>
-			<p>{currQuestion?.content}</p>
-			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
+		<div className="p-5">
+			<div className="flex gap-5">
+				<MediaEl
+					src={currQuestion?.mediaSrc}
+					mediaType={currQuestion?.mediaType || "none"}
+					quizStage={quizStage}
+					isVideoPlaying={isVideoPlaying}
+					setIsVideoPlaying={setIsVideoPlaying}
+				/>
+				<div className="flex flex-col justify-between">
+					<div>
+						<h1 className="text-xl font-extrabold">
+							{currQuestion?.content}
+						</h1>
+
+						<h2 className="font-extralight mt-3">Wytłumaczenie:</h2>
+						<p className="font-">
+							{quizStage === "explanation" &&
+								currQuestion?.explanation}
+						</p>
+					</div>
+
+					<div className="flex flex-col items-end">
+						<NoAnswerBtn
+							quizStage={quizStage}
+							setQuizStage={setQuizStage}
+							setSelectedAnswer={setSelectedAnswer}
+						/>
+						<p className="lowercase w-full">Czas na {quizStage}</p>
+						<Timer seconds={seconds} quizStage={quizStage} />
+					</div>
+				</div>
+			</div>
 			<AnswersBtns
 				answers={currQuestion?.answers}
 				selectedAnswer={selectedAnswer}
@@ -116,15 +139,9 @@ export default function Quiz() {
 				quizStage={quizStage}
 				correctAnswer={currQuestion?.correctAnswer}
 			/>
-			<NoAnswerBtn
-				quizStage={quizStage}
-				setQuizStage={setQuizStage}
-				setSelectedAnswer={setSelectedAnswer}
-			/>
 			<AiAssistance questionId={currQuestion?.id} quizStage={quizStage} />
-			<p>Czas na {quizStage}</p>
-			<p>{quizStage === "explanation" && currQuestion?.explanation}</p>
-			<Timer seconds={seconds} quizStage={quizStage} />
-		</>
+			
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
+		</div>
 	);
 }

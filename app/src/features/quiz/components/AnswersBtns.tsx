@@ -51,22 +51,32 @@ export default function AnswersBtns({
 		}
 	}, [setSelectedAnswer, quizStage]);
 
-	return possibleAnswers.map(({ code, content }) => (
-		<Fragment key={code}>
-			<label
-				htmlFor={code}
-				style={getAnswerStyle(quizStage, code, correctAnswer)}
-			>
-				{content}
-			</label>
-			<input
-				type="radio"
-				name="answer"
-				id={code}
-				checked={selectedAnswer === code}
-				disabled={quizStage === "explanation"}
-				onChange={() => setSelectedAnswer(code)}
-			/>
-		</Fragment>
-	));
+	return (
+		<div className="flex justify-around px-20">
+			{possibleAnswers.map(({ code, content }) => (
+				<Fragment key={code}>
+					<label
+						className={`border px-20 py-5 border-gray-700 rounded cursor-pointer uppercase text-xl text-black mt-5 ${
+							selectedAnswer === code
+								? "bg-blue-500"
+								: "bg-gray-300"
+						}`}
+						htmlFor={code}
+						style={getAnswerStyle(quizStage, code, correctAnswer)}
+					>
+						{content}
+					</label>
+					<input
+						className="hidden"
+						type="radio"
+						name="answer"
+						id={code}
+						checked={selectedAnswer === code}
+						disabled={quizStage === "explanation"}
+						onChange={() => setSelectedAnswer(code)}
+					/>
+				</Fragment>
+			))}
+		</div>
+	);
 }
