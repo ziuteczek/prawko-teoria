@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import supabase from "../../../utils/supabase";
-import type { QuizStage } from "../types";
-import AuthContext from "../../../context/auth.context";
+import supabase from "../utils/supabase";
+import type { QuizStage } from "../features/quiz/types";
+import AuthContext from "../context/auth.context";
 
 export default function AiAssistance({
 	questionId,

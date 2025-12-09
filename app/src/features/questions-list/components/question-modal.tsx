@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { questionRow } from "./page";
 import { GOOGLE_CLOUD_URI } from "../../../config/cloud.storage";
-import AiAssistance from "../../quiz/components/AiAssistance";
+import AiAssistance from "../../../components/AiAssistance";
 
 function MediaPlayer({ mediaSrc }: { mediaSrc: string | null | undefined }) {
 	if (mediaSrc?.endsWith(".webm")) {

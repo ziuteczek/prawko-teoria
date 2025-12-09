@@ -11,7 +11,7 @@ import Timer from "./Timer";
 import useQuestion from "../hooks/Question";
 import type { QuizStage } from "../types";
 import NoAnswerBtn from "./NoAnswerBtn";
-import AiAssistance from "./AiAssistance";
+import AiAssistance from "../../../components/AiAssistance";
 
 export default function Quiz() {
 	const redirect = useNavigate();
