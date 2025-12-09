@@ -19,21 +19,21 @@ function QuestionAnswers({ question }: { question: questionRow }) {
 		return (
 			<>
 				<button
-					className={`disabled ${
+					className={`disabled cursor-pointer ${
 						question.correct_answer === "A" && "bg-green-500"
 					}`}
 				>
 					{question.answer_a}
 				</button>
 				<button
-					className={`disabled ${
+					className={`disabled cursor-pointer ${
 						question.correct_answer === "B" && "bg-green-500"
 					}`}
 				>
 					{question.answer_b}
 				</button>
 				<button
-					className={`disabled ${
+					className={`disabled cursor-pointer ${
 						question.correct_answer === "C" && "bg-green-500"
 					}`}
 				>
@@ -46,14 +46,14 @@ function QuestionAnswers({ question }: { question: questionRow }) {
 	return (
 		<>
 			<button
-				className={`disabled ${
+				className={`disabled cursor-pointer ${
 					question.correct_answer === "T" && "bg-green-500"
 				}`}
 			>
 				Tak
 			</button>
 			<button
-				className={`disabled ${
+				className={`disabled cursor-pointer ${
 					question.correct_answer === "N" && "bg-green-500"
 				}`}
 			>
@@ -88,11 +88,27 @@ export default function QuestionModalPresentation({
 	}
 
 	return (
-		<dialog ref={dialogRef} onClose={() => setDisplayedQuestion(null)}>
-			<button onClick={() => setDisplayedQuestion(null)}>X</button>
-			<p>{question?.content}</p>
-			<MediaPlayer mediaSrc={question?.media} />
-			<QuestionAnswers question={question} />
+		<dialog
+			className="absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]"
+			ref={dialogRef}
+			onClose={() => setDisplayedQuestion(null)}
+			onClick={(e) =>
+				(e.target as HTMLDialogElement) === dialogRef.current &&
+				dialogRef.current.close()
+			}
+		>
+			<div>
+				<button
+					className="text-red-500 cursor-pointer"
+					onClick={() => setDisplayedQuestion(null)}
+				>
+					X
+				</button>
+				<p>{question?.content}</p>
+				<MediaPlayer mediaSrc={question?.media} />
+				<QuestionAnswers question={question} />
+				<p>{question.explanation}</p>
+			</div>
 		</dialog>
 	);
 }

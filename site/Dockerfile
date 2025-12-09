@@ -3,6 +3,10 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+# Declare build argument
+ARG VITE_PAGE_URL
+ENV VITE_PAGE_URL=${VITE_PAGE_URL}
+
 COPY package*.json ./
 RUN npm install
 
