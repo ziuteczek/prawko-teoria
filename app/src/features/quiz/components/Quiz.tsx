@@ -132,6 +132,7 @@ export default function Quiz() {
 					</div>
 				</div>
 			</div>
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} enableBtn={selectedAnswer || quizStage === "explanation"} />
 			<AnswersBtns
 				answers={currQuestion?.answers}
 				selectedAnswer={selectedAnswer}
@@ -141,7 +142,6 @@ export default function Quiz() {
 			/>
 			<AiAssistance questionId={currQuestion?.id} quizStage={quizStage} />
 			
-			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} />
 		</div>
 	);
 }
