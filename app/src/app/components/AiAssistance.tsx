@@ -117,7 +117,7 @@ export default function AiAssistance({
 	};
 
 	return (
-		<>
+		<form>
 			{quizStage === "explanation" ? (
 				<>
 					<textarea
@@ -138,6 +138,6 @@ export default function AiAssistance({
 			) : (
 				<></>
 			)}
-		</>
+		</form>
 	);
 }

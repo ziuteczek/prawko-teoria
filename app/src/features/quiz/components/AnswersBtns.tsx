@@ -5,18 +5,18 @@ import type {
 } from "../../../types/questions.types";
 import type { QuizStage } from "../types";
 
-const getAnswerStyle = (
-	quizStage: QuizStage,
-	elsAnswer: possibleCorrectAnswers,
-	correctAnswer: possibleCorrectAnswers | undefined
-) => {
-	return {
-		backgroundColor:
-			quizStage === "explanation" && correctAnswer === elsAnswer
-				? "green"
-				: "",
-	};
-};
+// const getAnswerStyle = (
+// 	quizStage: QuizStage,
+// 	elsAnswer: possibleCorrectAnswers,
+// 	correctAnswer: possibleCorrectAnswers | undefined
+// ) => {
+// 	return {
+// 		backgroundColor:
+// 			quizStage === "explanation" && correctAnswer === elsAnswer
+// 				? "green"
+// 				: "",
+// 	};
+// };
 
 export default function AnswersBtns({
 	answers,
@@ -51,22 +51,40 @@ export default function AnswersBtns({
 		}
 	}, [setSelectedAnswer, quizStage]);
 
-	return possibleAnswers.map(({ code, content }) => (
-		<Fragment key={code}>
-			<label
-				htmlFor={code}
-				style={getAnswerStyle(quizStage, code, correctAnswer)}
-			>
-				{content}
-			</label>
-			<input
-				type="radio"
-				name="answer"
-				id={code}
-				checked={selectedAnswer === code}
-				disabled={quizStage === "explanation"}
-				onChange={() => setSelectedAnswer(code)}
-			/>
-		</Fragment>
-	));
+	return (
+		<div className="flex justify-around px-20">
+			{possibleAnswers.map(({ code, content }) => (
+				<Fragment key={code}>
+					<label
+						className={`border px-20 py-5 border-gray-400 rounded cursor-pointer uppercase text-xl text-black mt-5 ${
+							selectedAnswer === code
+								? "bg-blue-500"
+								: "bg-gray-300"
+						} ${
+							quizStage === "explanation" &&
+							correctAnswer === code &&
+							"bg-green-600"
+						} ${
+							selectedAnswer !== correctAnswer &&
+							code !== correctAnswer &&
+							quizStage === "explanation" &&
+							"bg-red-700"
+						}`}
+						htmlFor={code}
+					>
+						{content}
+					</label>
+					<input
+						className="hidden"
+						type="radio"
+						name="answer"
+						id={code}
+						checked={selectedAnswer === code}
+						disabled={quizStage === "explanation"}
+						onChange={() => setSelectedAnswer(code)}
+					/>
+				</Fragment>
+			))}
+		</div>
+	);
 }

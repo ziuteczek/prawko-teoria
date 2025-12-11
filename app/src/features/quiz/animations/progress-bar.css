@@ -1,0 +1,19 @@
+.progress-bar-hider {
+	animation: progross-bar-hider-animation 15s linear;
+}
+
+@keyframes progross-bar-hider-animation {
+	0% {
+		transform: translateX(100%);
+		background-color: green;
+	}
+
+    50% {
+        background-color: yellow;
+    }
+
+	100% {
+		transform: translateX(0);
+		background-color: red;
+	}
+}
