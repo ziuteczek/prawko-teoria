@@ -100,7 +100,7 @@ export default function AiAssistance({
 		}, 100);
 
 		setUserQuestion("");
-		setRequestsLeft((prev) => prev && prev--);
+		setRequestsLeft((prev) => prev ? prev - 1 : null);
 		setIsLoading(false);
 	};
 
