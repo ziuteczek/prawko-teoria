@@ -44,7 +44,7 @@ export default function QuestionsList() {
 
 			setCategoriesList([{ id: 0, title: "Wszystkie" }, ...data]);
 		})();
-	}, [categoriesList]);
+	}, []);
 
 	useEffect(() => {
 		const setQuestionsList = async () => {

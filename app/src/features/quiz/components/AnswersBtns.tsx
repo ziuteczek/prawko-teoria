@@ -5,18 +5,6 @@ import type {
 } from "../../../types/questions.types";
 import type { QuizStage } from "../types";
 
-// const getAnswerStyle = (
-// 	quizStage: QuizStage,
-// 	elsAnswer: possibleCorrectAnswers,
-// 	correctAnswer: possibleCorrectAnswers | undefined
-// ) => {
-// 	return {
-// 		backgroundColor:
-// 			quizStage === "explanation" && correctAnswer === elsAnswer
-// 				? "green"
-// 				: "",
-// 	};
-// };
 
 export default function AnswersBtns({
 	answers,
