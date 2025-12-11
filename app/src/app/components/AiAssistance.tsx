@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import supabase from "../../../utils/supabase";
-import type { QuizStage } from "../types";
-import AuthContext from "../../../context/auth.context";
+import supabase from "../../utils/supabase";
+import type { QuizStage } from "../../features/quiz/types";
+import AuthContext from "../../context/auth.context";
 
 export default function AiAssistance({
 	questionId,
@@ -89,16 +89,15 @@ export default function AiAssistance({
 				const currTextWordArr = prev.split(" ");
 				const currTextWordCount = currTextWordArr.length;
 
-				if (outputText.length === prev.length && typingIntervalRef.current) {
+				if (currTextWordCount >= outputTextArr.length && typingIntervalRef.current) {
 					clearInterval(typingIntervalRef.current);
+					typingIntervalRef.current = null;
+					return prev;
 				}
 
 				return [...currTextWordArr, outputTextArr[currTextWordCount]].join(" ");
 			});
 		}, 100);
-
-		clearInterval(typingIntervalRef.current);
-		typingIntervalRef.current = null;
 
 		setUserQuestion("");
 		setRequestsLeft((prev) => prev && prev--);
