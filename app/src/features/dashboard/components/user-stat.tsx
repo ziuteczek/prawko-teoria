@@ -47,7 +47,7 @@ export default function CategoryStat({
 	return (
 		<div
 			ref={ref}
-			className="border border-stone-400 p-4 rounded-md max-w-150 mb-5"
+			className="border border-stone-400 p-4 rounded-md max-w-150"
 		>
 			<h3 className="font-bold text-lg">{userStat.categoryTitle}</h3>
 			<div className="flex justify-between">

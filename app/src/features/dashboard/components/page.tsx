@@ -5,6 +5,7 @@ import supabase from "../../../utils/supabase";
 import CreaeteProfileModal from "../../../features/create.profile/components/create.profile.modal";
 import type { Database } from "../../../types/database.types";
 import CategoryStat from "./user-stat";
+import HeroDashboard from "./hero";
 
 export type userCategoryStats =
 	Database["public"]["Functions"]["get_user_stats"]["Returns"];
@@ -57,14 +58,10 @@ export default function Dashboard() {
 
 	return (
 		<>
-			<h1 className="text-4xl mb-3 font-bold">Dashboard</h1>
-			<CreaeteProfileModal
-				showModal={createProfileModal}
-				setShowModal={setCreateProfileModal}
-			/>
+			<HeroDashboard />
 
-			<div className="flex w-svw">
-				<div className="grid grid-cols-2 gap-4">
+			<div className="flex w-svw justify-center">
+				<div className="grid grid-cols-2 gap-7.5">
 					{userStats.map((userStat) => (
 						<CategoryStat
 							userStat={userStat}
@@ -73,6 +70,10 @@ export default function Dashboard() {
 					))}
 				</div>
 			</div>
+			<CreaeteProfileModal
+				showModal={createProfileModal}
+				setShowModal={setCreateProfileModal}
+			/>
 		</>
 	);
 }
