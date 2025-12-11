@@ -18,6 +18,7 @@ import type { QuizStage } from "../types";
 // 	};
 // };
 
+
 export default function AnswersBtns({
 	answers,
 	selectedAnswer,
@@ -56,19 +57,16 @@ export default function AnswersBtns({
 			{possibleAnswers.map(({ code, content }) => (
 				<Fragment key={code}>
 					<label
-						className={`border px-20 py-5 border-gray-400 rounded cursor-pointer uppercase text-xl text-black mt-5 ${
-							selectedAnswer === code
-								? "bg-blue-500"
-								: "bg-gray-300"
-						} ${
-							quizStage === "explanation" &&
-							correctAnswer === code &&
-							"bg-green-600"
-						} ${
-							selectedAnswer !== correctAnswer &&
-							code !== correctAnswer &&
-							quizStage === "explanation" &&
-							"bg-red-700"
+						className={`border px-20 py-5 border-gray-400 rounded cursor-pointer uppercase disabled:cursor-not-allowed text-xl text-black mt-5 transition-colors duration-300 ${
+							quizStage === "explanation"
+								? correctAnswer === code
+									? "bg-lime-700 text-white" // Correct answer - green
+									: selectedAnswer === code && selectedAnswer !== correctAnswer
+									? "bg-rose-700 text-white" // Selected wrong answer - red
+									: "bg-gray-300" // Other answers - neutral
+								: selectedAnswer === code
+								? "bg-blue-500 text-white" // Selected during answering
+								: "bg-gray-300 hover:bg-gray-400" // Unselected during answering
 						}`}
 						htmlFor={code}
 					>
