@@ -1,6 +1,8 @@
 services:
   app:
-    build: ./app
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
     ports:
       - "8080:80"
 
@@ -8,6 +10,6 @@ services:
     build:
       context: ./site
       args:
-        VITE_PAGE_URL: http://localhost:8080
+        VITE_PAGE_URL: https://google.com
     ports:
       - "8081:80"
