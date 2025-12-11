@@ -132,7 +132,7 @@ export default function Quiz() {
 					</div>
 				</div>
 			</div>
-			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} enableBtn={selectedAnswer || quizStage === "explanation"} />
+			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} enableBtn={!!selectedAnswer || quizStage === "explanation"} />
 			<AnswersBtns
 				answers={currQuestion?.answers}
 				selectedAnswer={selectedAnswer}
