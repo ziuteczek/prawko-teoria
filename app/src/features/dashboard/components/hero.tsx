@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import CatWaving from "../assets/cat-waving.svg?react";
 import supabase from "../../../utils/supabase";
 import AuthContext from "../../../context/auth.context";
+import SlotCounter from "react-slot-counter";
 export default function HeroDashboard() {
 	const { user } = useContext(AuthContext);
 	const [username, setUsername] = useState("");
@@ -52,7 +53,7 @@ export default function HeroDashboard() {
 				<p>
 					Udało ci się opanować już{" "}
 					<span className="font-bold decoration-5 text-blue-600">
-						{224}
+						<SlotCounter value={511} duration={3} />
 					</span>{" "}
 					pytania!
 				</p>
