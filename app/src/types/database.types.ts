@@ -269,6 +269,10 @@ export type Database = {
         Args: { p_days: number; p_profile_id: string }
         Returns: undefined
       }
+      get_correct_answers_count: {
+        Args: { p_profile_id: string }
+        Returns: number
+      }
       get_incorrect_or_unanswered_questions: {
         Args: {
           p_category_id: number

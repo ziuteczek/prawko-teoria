@@ -3,18 +3,25 @@ import CatWaving from "../assets/cat-waving.svg?react";
 import supabase from "../../../utils/supabase";
 import AuthContext from "../../../context/auth.context";
 import SlotCounter from "react-slot-counter";
+
 export default function HeroDashboard() {
 	const { user } = useContext(AuthContext);
 	const [username, setUsername] = useState("");
+	const [correctAnswersCount, setCorrectAnswersCount] = useState<
+		number | null
+	>(null);
 
 	useEffect(() => {
 		const username = localStorage.getItem("username");
 
-		if (!username) {
-			return;
+		if (username) {
+			setUsername(username);
 		}
 
-		setUsername(username);
+		const correctAnswersCount = localStorage.getItem("correct-answers");
+		if (correctAnswersCount) {
+			setCorrectAnswersCount(Number(correctAnswersCount));
+		}
 	}, []);
 
 	useEffect(() => {
@@ -22,6 +29,7 @@ export default function HeroDashboard() {
 			return;
 		}
 
+		// get users username
 		(async () => {
 			const { data, error } = await supabase
 				.from("profiles")
@@ -38,6 +46,22 @@ export default function HeroDashboard() {
 			setUsername(data.username);
 			localStorage.setItem("username", data.username);
 		})();
+
+		// get users correct answers count
+		(async () => {
+			const { data, error } = await supabase.rpc(
+				"get_correct_answers_count",
+				{ p_profile_id: user.id }
+			);
+
+			if (error) {
+				console.error(error);
+				return;
+			}
+
+			localStorage.setItem("correct-answers", String(data));
+			setCorrectAnswersCount(data);
+		})();
 	}, [user?.id]);
 
 	return (
@@ -53,7 +77,14 @@ export default function HeroDashboard() {
 				<p>
 					Udało ci się opanować już{" "}
 					<span className="font-bold decoration-5 text-blue-600">
-						<SlotCounter value={511} duration={3} />
+						{correctAnswersCount ? (
+							<SlotCounter
+								value={correctAnswersCount}
+								duration={1.5}
+							/>
+						) : (
+							"000"
+						)}
 					</span>{" "}
 					pytania!
 				</p>
