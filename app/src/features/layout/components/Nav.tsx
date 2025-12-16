@@ -1,5 +1,5 @@
 /// <reference types="vite-plugin-svgr/client" />
-import logo from "../assets/logo.png";
+import logo from "../../../app/assets/logo.png"
 import HomeIcon from "../assets/home-icon.svg?react";
 import TestIcon from "../assets/test-icon.svg?react";
 import SettingsIcon from "../assets/settings-icon.svg?react";
