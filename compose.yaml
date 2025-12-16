@@ -12,4 +12,5 @@ services:
       args:
         VITE_PAGE_URL: https://google.com
     ports:
-      - "8081:80"
+      - "443:80"
+      - "80:80"
