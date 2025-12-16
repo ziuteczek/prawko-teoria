@@ -7,6 +7,7 @@ import GoogleIcon from "../assets/google-icon.svg?react";
 import FacebookIcon from "../assets/facebook-icon.svg?react";
 import BackArrow from "../assets/arrow-back.svg?react";
 import logo from "../assets/logo.png";
+import { signInFacebook, signInGoogle } from "../../utils/auth";
 
 export default function Login() {
 	const redirect = useNavigate();
@@ -31,37 +32,6 @@ export default function Login() {
 			return;
 		}
 		await redirect("/dashboard");
-	};
-
-	const registerUserFacebook = async (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {
-		e.preventDefault();
-
-		const { error } = await supabase.auth.signInWithOAuth({
-			provider: "facebook",
-		});
-
-		if (error) {
-			alert(error.message);
-		}
-	};
-
-	const registerUserGoogle = async (
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	) => {
-		e.preventDefault();
-
-		const { error } = await supabase.auth.signInWithOAuth({
-			provider: "google",
-			options: {
-				redirectTo: "/dashboard?has_profile=true",
-			},
-		});
-
-		if (error) {
-			alert(error.message);
-		}
 	};
 
 	return (
@@ -129,8 +99,9 @@ export default function Login() {
 				<button
 					className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-5 py-2.5 disabled:cursor-not-allowed hover:disabled:bg-gray-400 cursor-pointer"
 					type="submit"
+					disabled={!loginData.email || !loginData.password}
 				>
-					zaloguj się
+					Zaloguj się
 				</button>
 				<p>
 					Zamiast tego{" "}
@@ -142,14 +113,14 @@ export default function Login() {
 				<div className="flex justify-between gap-5">
 					<button
 						type="button"
-						onClick={(e) => registerUserGoogle(e)}
+						onClick={(e) => signInGoogle(e)}
 						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
 					>
 						<GoogleIcon className="max-w-10 max-h-10" />
 					</button>
 					<button
 						type="button"
-						onClick={(e) => registerUserFacebook(e)}
+						onClick={(e) => signInFacebook(e)}
 						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
 					>
 						<FacebookIcon className="max-w-10 max-h-10" />
