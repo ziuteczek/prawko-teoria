@@ -7,6 +7,9 @@ import FacebookIcon from "../assets/facebook-icon.svg?react";
 import BackArrow from "../assets/arrow-back.svg?react";
 import logo from "../assets/logo.png";
 import { signInFacebook, signInGoogle } from "../../utils/auth";
+import AlertPopup from "../components/AlertPopup";
+
+import "../../styles/scaling-animation.css";
 
 export default function Register() {
 	const [registerData, setRegisterData] = useState<registerData>({
@@ -53,8 +56,6 @@ export default function Register() {
 			alert(error.message);
 		}
 	};
-
-
 
 	return (
 		<>
@@ -151,6 +152,7 @@ export default function Register() {
 					</button>
 				</div>
 			</form>
+			<AlertPopup duration={150000} text="elo" title="zelo" color="red" />
 		</>
 	);
 }
