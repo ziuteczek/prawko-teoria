@@ -37,10 +37,11 @@ export default function Login() {
 	return (
 		<>
 			<a
-				href="%VITE_HOME_PAGE_URL%"
+				href={import.meta.env.VITE_HOME_PAGE_URL}
 				className="absolute top-5 left-5 text-2xl uppercase flex justify-center items-center gap-3"
 			>
-				<BackArrow className="max-w-5 max-h-5" /> <span>strona główna</span>
+				<BackArrow className="max-w-5 max-h-5" />{" "}
+				<span>strona główna</span>
 			</a>
 			<form
 				onSubmit={(e) => handleLogin(e)}
@@ -53,51 +54,63 @@ export default function Login() {
 					alt="prawko-teoria.pl logo"
 					className="max-w-30 max-h-30"
 				/>
-				<div className="flex flex-col max-w-65 w-full ">
+				<div className="flex flex-col max-w-65 w-full">
 					<label className="text-sm font-bold " htmlFor="email">
 						email
 					</label>
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						id="email"
 						type="email"
 						value={loginData.email}
 						onChange={(e) =>
-							setLoginData({ ...loginData, email: e.target.value })
+							setLoginData({
+								...loginData,
+								email: e.target.value,
+							})
 						}
 					/>
 				</div>
 
-				<div className="flex flex-col max-w-65 w-full ">
+				<div className="flex flex-col max-w-65 w-full">
 					<label className="text-sm font-bold " htmlFor="password">
 						hasło
 					</label>
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						id="password"
 						type="password"
 						value={loginData.password}
 						onChange={(e) =>
-							setLoginData({ ...loginData, password: e.target.value })
+							setLoginData({
+								...loginData,
+								password: e.target.value,
+							})
 						}
 					/>
 				</div>
-				<div className="max-w-65 w-full ">
+				<div className="max-w-65 w-full">
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						id="keepLogin"
 						type="checkbox"
 						checked={loginData.keepLogin}
 						onChange={(e) =>
-							setLoginData({ ...loginData, keepLogin: e.target.checked })
+							setLoginData({
+								...loginData,
+								keepLogin: e.target.checked,
+							})
 						}
 					/>
-					<label className="text-sm font-bold ml-2.5" htmlFor="keepLogin">
+					<label
+						className="text-sm font-bold ml-2.5"
+						htmlFor="keepLogin"
+					>
 						nie wylogowuj
 					</label>
 				</div>
 				<button
-					className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-5 py-2.5 disabled:cursor-not-allowed hover:disabled:bg-gray-400 cursor-pointer"
+					className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-5 py-2.5 disabled:cursor-not-allowed hover:disabled:bg-gray-400 cursor-pointer rounded"
 					type="submit"
 					disabled={!loginData.email || !loginData.password}
 				>
@@ -105,7 +118,10 @@ export default function Login() {
 				</button>
 				<p>
 					Zamiast tego{" "}
-					<Link className="text-blue-600 hover:text-blue-800" to="/register">
+					<Link
+						className="text-blue-600 hover:text-blue-800"
+						to="/register"
+					>
 						zarejestruj się
 					</Link>
 					.
@@ -114,14 +130,14 @@ export default function Login() {
 					<button
 						type="button"
 						onClick={(e) => signInGoogle(e)}
-						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
+						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-200 transition-colors duration-300"
 					>
 						<GoogleIcon className="max-w-10 max-h-10" />
 					</button>
 					<button
 						type="button"
 						onClick={(e) => signInFacebook(e)}
-						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
+						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-200 transition-colors duration-300"
 					>
 						<FacebookIcon className="max-w-10 max-h-10" />
 					</button>

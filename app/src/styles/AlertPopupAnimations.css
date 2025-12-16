@@ -1,6 +1,6 @@
 @keyframes scaling-animation {
 	from {
-		transform: scaleX(100%)
+		transform: scaleX(100%);
 	}
 	to {
 		transform: scaleX(0);

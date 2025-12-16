@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "../../styles/AlertPopupAnimations.css";
 
 export default function AlertPopup({
 	title,
@@ -31,15 +32,15 @@ export default function AlertPopup({
 	}
 
 	return (
-		<div className="fixed top-20 right-0 max-w-75 w-full border border-r-0 border-stone-400 rounded-l-md">
+		<div className="fixed top-20 right-0 max-w-75 w-full border border-r-0 border-red-800 rounded-l-md bg-red-100 overflow-clip">
 			<div className="p-3">
 				<h3 className="font-bold">{title}</h3>
 				<p>{text}</p>
 			</div>
 			<div
-				className="absolute bottom-0 left-0 right-0 h-2"
+				className="absolute bottom-0 left-0 right-0 h-2 origin-left"
 				style={{
-					animation: `scaling-animation ${duration}ms`,
+					animation: `scaling-animation ${duration}ms linear`,
 					backgroundColor: color,
 				}}
 			></div>
