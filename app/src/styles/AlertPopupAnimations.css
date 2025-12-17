@@ -6,3 +6,17 @@
 		transform: scaleX(0);
 	}
 }
+@keyframes hiding-animation {
+	0% {
+		transform: translateX(110%);
+	}
+	10% {
+		transform: translateX(0%);
+	}
+	90% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(110%);
+	}
+}

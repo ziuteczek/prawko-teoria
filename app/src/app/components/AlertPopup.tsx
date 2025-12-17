@@ -4,12 +4,12 @@ import "../../styles/AlertPopupAnimations.css";
 export default function AlertPopup({
 	title,
 	text,
-	color,
+	// color,
 	duration,
 }: {
 	title: string;
 	text: string;
-	color: string;
+	// color: string;
 	duration: number;
 }) {
 	const [showPopUp, setShowPopUp] = useState<boolean>(false);
@@ -32,7 +32,10 @@ export default function AlertPopup({
 	}
 
 	return (
-		<div className="fixed top-20 right-0 max-w-75 w-full border border-r-0 border-red-800 rounded-l-md bg-red-100 overflow-clip">
+		<div
+			className="fixed top-20 right-0 max-w-75 w-full border border-r-0 border-red-800 rounded-l-md bg-red-100 overflow-clip"
+			style={{ animation: `hiding-animation ${duration}ms linear` }}
+		>
 			<div className="p-3">
 				<h3 className="font-bold">{title}</h3>
 				<p>{text}</p>
@@ -41,7 +44,7 @@ export default function AlertPopup({
 				className="absolute bottom-0 left-0 right-0 h-2 origin-left"
 				style={{
 					animation: `scaling-animation ${duration}ms linear`,
-					backgroundColor: color,
+					backgroundColor: "red",
 				}}
 			></div>
 		</div>

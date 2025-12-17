@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import supabase from "../../utils/supabase";
 
 import type { loginData } from "../../types/login.types";
@@ -8,9 +8,11 @@ import FacebookIcon from "../assets/facebook-icon.svg?react";
 import BackArrow from "../assets/arrow-back.svg?react";
 import logo from "../assets/logo.png";
 import { signInFacebook, signInGoogle } from "../../utils/auth";
+import PopupContext from "../../context/popup.context";
 
 export default function Login() {
 	const redirect = useNavigate();
+	const { addPopup } = useContext(PopupContext);
 
 	const [loginData, setLoginData] = useState<loginData>({
 		email: "",
@@ -27,8 +29,11 @@ export default function Login() {
 			password,
 		});
 
+		if (error && addPopup) {
+			addPopup("Błąd poczdczas logowania", error.message, "error");
+		}
+
 		if (error) {
-			alert(error.message);
 			return;
 		}
 		await redirect("/dashboard");

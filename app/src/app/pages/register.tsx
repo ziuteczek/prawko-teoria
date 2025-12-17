@@ -1,5 +1,4 @@
-import { useState } from "react";
-import type { registerData } from "../../types/login.types";
+import { useContext, useState } from "react";
 import supabase from "../../utils/supabase";
 import { Link } from "react-router";
 import GoogleIcon from "../assets/google-icon.svg?react";
@@ -7,6 +6,8 @@ import FacebookIcon from "../assets/facebook-icon.svg?react";
 import BackArrow from "../assets/arrow-back.svg?react";
 import logo from "../assets/logo.png";
 import { signInFacebook, signInGoogle } from "../../utils/auth";
+import type { registerData } from "../../types/login.types";
+import PopupContext from "../../context/popup.context";
 
 export default function Register() {
 	const [registerData, setRegisterData] = useState<registerData>({
@@ -14,6 +15,8 @@ export default function Register() {
 		password: "",
 		passwordConfirmation: "",
 	});
+
+	const { addPopup } = useContext(PopupContext);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -38,8 +41,14 @@ export default function Register() {
 	const registerUser = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		if (
+			registerData.password !== registerData.passwordConfirmation &&
+			addPopup
+		) {
+			addPopup("Błąd podczas rejestracji", "Hasła są różne", "error");
+		}
+
 		if (registerData.password !== registerData.passwordConfirmation) {
-			alert("Password aren't matching");
 			return;
 		}
 
@@ -49,8 +58,8 @@ export default function Register() {
 			password,
 		});
 
-		if (error) {
-			alert(error.message);
+		if (error && addPopup) {
+			addPopup("Błąd podczas rejestracji", error.message, "error");
 		}
 	};
 
