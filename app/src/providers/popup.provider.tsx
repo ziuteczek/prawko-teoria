@@ -2,8 +2,7 @@ import { useCallback, useState, type ReactNode } from "react";
 
 import type { popupData } from "../types/global.types";
 import PopupContext from "../context/popup.context";
-
-export type popupType = "error";
+import type { popupType } from "../app/components/AlertPopup";
 
 const sleep = async (time: number) =>
 	await new Promise((resolve) => setTimeout(resolve, time));
@@ -11,22 +10,19 @@ const sleep = async (time: number) =>
 export function PopupProvider({ children }: { children: ReactNode }) {
 	const [popupData, setPopupData] = useState<popupData[]>([]);
 
-	const popupTypeToColor = useCallback((type: popupType) => {
-		switch (type) {
-			case "error":
-				return "red";
-		}
-	}, []);
-
 	const addPopup = useCallback(
 		async (title: string, text: string, type: popupType) => {
-			const popupColor = popupTypeToColor(type);
-
 			const popupId = Date.now();
 
 			setPopupData((prev) => [
 				...prev,
-				{ id: popupId, title, text, color: popupColor, duration: 5000 },
+				{
+					id: popupId,
+					title,
+					text,
+					duration: 5000,
+					type,
+				},
 			]);
 
 			await sleep(5000);
@@ -35,7 +31,7 @@ export function PopupProvider({ children }: { children: ReactNode }) {
 				prev.filter((popup) => popup.id !== popupId)
 			);
 		},
-		[popupTypeToColor]
+		[]
 	);
 
 	return (

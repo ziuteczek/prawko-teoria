@@ -11,7 +11,7 @@ function PopupEls() {
 			key={data.id}
 			title={data.title}
 			text={data.text}
-			// color={data.color}
+			type={data.type}
 			duration={data.duration}
 		/>
 	));

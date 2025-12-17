@@ -1,5 +1,6 @@
 import type { User, Session } from "@supabase/supabase-js";
 import type { questionDataPromise } from "../features/quiz/utility/promisifyQuestion";
+import type { popupType } from "../app/components/AlertPopup";
 
 export interface authData {
 	user: User | null;
@@ -17,5 +18,5 @@ export interface popupData {
 	title: string;
 	text: string;
 	duration: number;
-	color: string;
+	type: popupType;
 }
