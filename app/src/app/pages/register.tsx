@@ -1,5 +1,4 @@
-import { useState } from "react";
-import type { registerData } from "../../types/login.types";
+import { useContext, useState } from "react";
 import supabase from "../../utils/supabase";
 import { Link } from "react-router";
 import GoogleIcon from "../assets/google-icon.svg?react";
@@ -7,6 +6,8 @@ import FacebookIcon from "../assets/facebook-icon.svg?react";
 import BackArrow from "../assets/arrow-back.svg?react";
 import logo from "../assets/logo.png";
 import { signInFacebook, signInGoogle } from "../../utils/auth";
+import type { registerData } from "../../types/login.types";
+import PopupContext from "../../context/popup.context";
 
 export default function Register() {
 	const [registerData, setRegisterData] = useState<registerData>({
@@ -14,6 +15,8 @@ export default function Register() {
 		password: "",
 		passwordConfirmation: "",
 	});
+
+	const { addPopup } = useContext(PopupContext);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -38,8 +41,14 @@ export default function Register() {
 	const registerUser = async (e: React.FormEvent) => {
 		e.preventDefault();
 
+		if (
+			registerData.password !== registerData.passwordConfirmation &&
+			addPopup
+		) {
+			addPopup("Błąd podczas rejestracji", "Hasła są różne", "error");
+		}
+
 		if (registerData.password !== registerData.passwordConfirmation) {
-			alert("Password aren't matching");
 			return;
 		}
 
@@ -49,20 +58,19 @@ export default function Register() {
 			password,
 		});
 
-		if (error) {
-			alert(error.message);
+		if (error && addPopup) {
+			addPopup("Błąd podczas rejestracji", error.message, "error");
 		}
 	};
-
-
 
 	return (
 		<>
 			<a
-				href="%VITE_HOME_PAGE_URL%"
+				href={import.meta.env.VITE_HOME_PAGE_URL}
 				className="absolute top-5 left-5 text-2xl uppercase flex justify-center items-center gap-3"
 			>
-				<BackArrow className="max-w-5 max-h-5" /> <span>strona główna</span>
+				<BackArrow className="max-w-5 max-h-5" />{" "}
+				<span>strona główna</span>
 			</a>
 			<form
 				onSubmit={registerUser}
@@ -80,7 +88,7 @@ export default function Register() {
 						email
 					</label>
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						type="email"
 						name="email"
 						id="email"
@@ -93,7 +101,7 @@ export default function Register() {
 						hasło
 					</label>
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						type="password"
 						name="password"
 						id="password"
@@ -102,11 +110,14 @@ export default function Register() {
 					/>
 				</div>
 				<div className="flex flex-col max-w-65 w-full ">
-					<label className="text-sm font-bold " htmlFor="password-repeat">
+					<label
+						className="text-sm font-bold "
+						htmlFor="password-repeat"
+					>
 						hasło ponownie
 					</label>
 					<input
-						className="border"
+						className="border rounded py-0.5 px-1"
 						type="password"
 						name="passwordConfirmation"
 						id="password-repeat"
@@ -116,20 +127,24 @@ export default function Register() {
 				</div>
 				<GetPasswordsMatchingEl />
 				<button
-					className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-5 py-2.5 disabled:cursor-not-allowed hover:disabled:bg-gray-400 cursor-pointer"
+					className="bg-blue-600 hover:bg-blue-700 transition-colors text-white px-5 py-2.5 disabled:cursor-not-allowed hover:disabled:bg-gray-400 cursor-pointer rounded"
 					type="submit"
 					disabled={
 						!registerData.email ||
 						!registerData.password ||
 						!registerData.passwordConfirmation ||
-						registerData.password !== registerData.passwordConfirmation
+						registerData.password !==
+							registerData.passwordConfirmation
 					}
 				>
 					Zarejestruj się
 				</button>
-				<p className="">
+				<p>
 					Zamiast tego{" "}
-					<Link className="text-blue-600 hover:text-blue-800" to="/login">
+					<Link
+						className="text-blue-600 hover:text-blue-800"
+						to="/login"
+					>
 						zaloguj się
 					</Link>
 					.
@@ -138,14 +153,14 @@ export default function Register() {
 					<button
 						type="button"
 						onClick={(e) => signInGoogle(e)}
-						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
+						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-200 transition-colors duration-300"
 					>
 						<GoogleIcon className="max-w-10 max-h-10" />
 					</button>
 					<button
 						type="button"
 						onClick={(e) => signInFacebook(e)}
-						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-100 transition-colors"
+						className="px-5 py-2.5 border rounded cursor-pointer border-gray-300 hover:bg-gray-200 transition-colors duration-300"
 					>
 						<FacebookIcon className="max-w-10 max-h-10" />
 					</button>
