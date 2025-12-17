@@ -18,7 +18,6 @@ import type { QuizStage } from "../types";
 // 	};
 // };
 
-
 export default function AnswersBtns({
 	answers,
 	selectedAnswer,
@@ -30,7 +29,7 @@ export default function AnswersBtns({
 	selectedAnswer: possibleCorrectAnswers | null;
 	setSelectedAnswer: React.Dispatch<
 		React.SetStateAction<possibleCorrectAnswers | null>
-	>;
+	> | null;
 	quizStage: QuizStage;
 	correctAnswer: possibleCorrectAnswers | undefined;
 }) {
@@ -47,7 +46,7 @@ export default function AnswersBtns({
 	}));
 
 	useEffect(() => {
-		if (quizStage === "reading") {
+		if (quizStage === "reading" && setSelectedAnswer) {
 			setSelectedAnswer(null);
 		}
 	}, [setSelectedAnswer, quizStage]);
@@ -61,7 +60,8 @@ export default function AnswersBtns({
 							quizStage === "explanation"
 								? correctAnswer === code
 									? "bg-lime-700 text-white" // Correct answer - green
-									: selectedAnswer === code && selectedAnswer !== correctAnswer
+									: selectedAnswer === code &&
+									  selectedAnswer !== correctAnswer
 									? "bg-rose-700 text-white" // Selected wrong answer - red
 									: "bg-gray-300" // Other answers - neutral
 								: selectedAnswer === code
@@ -79,7 +79,7 @@ export default function AnswersBtns({
 						id={code}
 						checked={selectedAnswer === code}
 						disabled={quizStage === "explanation"}
-						onChange={() => setSelectedAnswer(code)}
+						onChange={() => setSelectedAnswer && setSelectedAnswer(code)}
 					/>
 				</Fragment>
 			))}
