@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { popupData } from "../types/global.types";
-import type { popupType } from "../providers/popup.provider";
+import type { popupType } from "../app/components/AlertPopup";
 
 const PopupContext = createContext<{
 	popupData: popupData[];
