@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import supabase from "../../../utils/supabase";
 import QuestionsListTable from "./table";
 
 import type { Database } from "../../../types/database.types";
 import FilterQuestionsTableForm from "./filter-form";
 import QuestionModalPresentation from "./question-modal";
+import PopupContext from "../../../context/popup.context";
 
 export type questionRow = Database["public"]["Tables"]["questions"]["Row"];
 export type categoriesType = Database["public"]["Tables"]["categories"]["Row"];
@@ -32,9 +33,13 @@ export default function QuestionsList() {
 		limit: 30,
 	});
 
+	const { addPopup } = useContext(PopupContext);
+
 	useEffect(() => {
 		(async () => {
-			const { data, error } = await supabase.from("categories").select("*");
+			const { data, error } = await supabase
+				.from("categories")
+				.select("*");
 
 			if (error) {
 				return;
@@ -45,6 +50,10 @@ export default function QuestionsList() {
 	}, []);
 
 	useEffect(() => {
+		if (!addPopup) {
+			return;
+		}
+
 		const setQuestionsList = async () => {
 			const { data, error } = await supabase
 				.from("questions")
@@ -63,18 +72,21 @@ export default function QuestionsList() {
 
 			if (error) {
 				console.error("Error while fetching questions!");
+				addPopup(
+					"Błąd podczas pobierania listy pytań",
+					error.message,
+					"error"
+				);
 				return;
 			}
 
 			setNextPagePossible(true);
 
-			console.log("elo");
-
 			setQuestionList(data);
 		};
 
 		setQuestionsList();
-	}, [listSettings]);
+	}, [listSettings, addPopup]);
 
 	return (
 		<>
