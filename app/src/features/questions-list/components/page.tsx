@@ -32,7 +32,7 @@ export default function QuestionsList() {
 		content: "",
 		questionCategoryId: 0,
 		licenseCategory: "",
-		page: 0,
+		page: 1,
 		limit: 30,
 	});
 	const { user } = useContext(AuthContext);
@@ -53,7 +53,7 @@ export default function QuestionsList() {
 				.toSorted((a, b) => a.id - b.id)
 				.map((c) => c.title);
 
-			setCategoriesList(["Wszystkie",...categoriesArr]);
+			setCategoriesList(["Wszystkie", ...categoriesArr]);
 		})();
 	}, []);
 
@@ -67,8 +67,10 @@ export default function QuestionsList() {
 				"get_questions_with_answers",
 				{
 					p_profile_id: user.id,
-					p_limit: listSettings.limit,
 					p_search: listSettings.content,
+					p_page: listSettings.page,
+					p_page_size: listSettings.limit,
+					p_category_id: listSettings.questionCategoryId || undefined,
 				}
 			);
 

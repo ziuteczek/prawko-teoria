@@ -89,7 +89,7 @@ export default function FilterQuestionsTableForm({
 			<div className="flex justify-around">
 				<button
 					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-					disabled={listSettings.page === 0}
+					disabled={listSettings.page === 1}
 					onClick={() =>
 						setListSettings((prev) => ({
 							...prev,
@@ -99,7 +99,7 @@ export default function FilterQuestionsTableForm({
 				>
 					Poprzednia
 				</button>
-				<div>{listSettings.page + 1}</div>
+				<div>{listSettings.page}</div>
 				<button
 					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
 					onClick={() =>
