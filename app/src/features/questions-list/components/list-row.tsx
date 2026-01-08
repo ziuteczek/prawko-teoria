@@ -3,19 +3,9 @@ import type { questionRow } from "./page";
 export default function QuestionListRow({
 	setDisplayedQuestion,
 	questionRow,
-	content,
-	questionCategory,
-	drivingLicenseCategory,
-	knowlage,
-	id,
 }: {
 	setDisplayedQuestion: React.Dispatch<React.SetStateAction<questionRow | null>>;
 	questionRow: questionRow;
-	content: string;
-	questionCategory: string;
-	drivingLicenseCategory: string;
-	knowlage: string;
-	id: number;
 }) {
 	return (
 		<tr
@@ -25,12 +15,12 @@ export default function QuestionListRow({
 			}}
 		>
 			<th scope="row" className="px-6 py-4 font-medium text-heading">
-				{id}
+				{questionRow.id}
 			</th>
-			<td className="px-6 py-4 max-w-100 truncate">{content}</td>
-			<td className="px-6 py-4">{questionCategory}</td>
-			<td className="px-6 py-4">{drivingLicenseCategory}</td>
-			<td className="px-6 py-4">{knowlage}</td>
+			<td className="px-6 py-4 max-w-100 truncate">{questionRow.content}</td>
+			<td className="px-6 py-4">{"brak"}</td>
+			<td className="px-6 py-4">{questionRow.types.join(', ')}</td>
+			<td className="px-6 py-4">{questionRow.correct_answer === questionRow.answer ? "Znasz" : "Nie znasz"}</td>
 		</tr>
 	);
 }

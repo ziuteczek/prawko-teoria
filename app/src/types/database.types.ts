@@ -308,6 +308,21 @@ export type Database = {
           uaQuestion: string
         }[]
       }
+      get_questions_with_answers: {
+        Args: { p_limit?: number; p_profile_id: string; p_search?: string }
+        Returns: {
+          answer: string
+          answer_a: string
+          answer_b: string
+          answer_c: string
+          content: string
+          correct_answer: string
+          explanation: string
+          id: number
+          media: string
+          types: string[]
+        }[]
+      }
       get_user_stats: {
         Args: { p_user_id: string }
         Returns: {
