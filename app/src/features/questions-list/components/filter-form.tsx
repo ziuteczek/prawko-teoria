@@ -1,4 +1,4 @@
-import type { categoriesType, ListSettingsType } from "./page";
+import type { ListSettingsType } from "./page";
 
 export default function FilterQuestionsTableForm({
 	categoriesList,
@@ -6,13 +6,16 @@ export default function FilterQuestionsTableForm({
 	setListSettings,
 	nextPagePossible,
 }: {
-	categoriesList: categoriesType[];
+	categoriesList: string[];
 	listSettings: ListSettingsType;
 	setListSettings: React.Dispatch<React.SetStateAction<ListSettingsType>>;
 	nextPagePossible: boolean;
 }) {
 	return (
-		<form className="flex flex-col gap-2" onSubmit={(e) => e.preventDefault()}>
+		<form
+			className="flex flex-col gap-2"
+			onSubmit={(e) => e.preventDefault()}
+		>
 			<h2 className="text-3xl uppercase text-center">Filtry</h2>
 
 			<div className="flex flex-col">
@@ -52,9 +55,9 @@ export default function FilterQuestionsTableForm({
 					id="question-category"
 					className="max-w-50  truncate"
 				>
-					{categoriesList.map((category) => (
-						<option key={category.id} value={category.id}>
-							{category.title}
+					{categoriesList.map((category,i) => (
+						<option key={category} value={i}>
+							{category}
 						</option>
 					))}
 				</select>

@@ -8,7 +8,6 @@ import QuestionModalPresentation from "./question-modal";
 import PopupContext from "../../../context/popup.context";
 import AuthContext from "../../../context/auth.context";
 
-// export type questionRow = Database["public"]["Tables"]["questions"]["Row"];
 export type categoriesType = Database["public"]["Tables"]["categories"]["Row"];
 export type ListSettingsType = {
 	ascending: boolean;
@@ -19,14 +18,15 @@ export type ListSettingsType = {
 	limit: number;
 };
 
-export type questionRow = Database["public"]["Functions"]["get_questions_with_answers"]["Returns"][number]
+export type questionRow =
+	Database["public"]["Functions"]["get_questions_with_answers"]["Returns"][number];
 
 export default function QuestionsList() {
 	const [questionsList, setQuestionList] = useState<questionRow[]>([]);
-	const [categoriesList, setCategoriesList] = useState<categoriesType[]>([]);
 	const [displayedQuestion, setDisplayedQuestion] =
 		useState<questionRow | null>(null);
 	const [nextPagePossible, setNextPagePossible] = useState<boolean>(false);
+	const [categoriesList, setCategoriesList] = useState<string[]>([]);
 	const [listSettings, setListSettings] = useState<ListSettingsType>({
 		ascending: true,
 		content: "",
@@ -41,13 +41,19 @@ export default function QuestionsList() {
 
 	useEffect(() => {
 		(async () => {
-			const { data, error } = await supabase.from("categories").select("*");
+			const { data, error } = await supabase
+				.from("categories")
+				.select("*");
 
 			if (error) {
 				return;
 			}
 
-			setCategoriesList([{ id: 0, title: "Wszystkie" }, ...data]);
+			const categoriesArr = data
+				.toSorted((a, b) => a.id - b.id)
+				.map((c) => c.title);
+
+			setCategoriesList(["Wszystkie",...categoriesArr]);
 		})();
 	}, []);
 
@@ -57,30 +63,22 @@ export default function QuestionsList() {
 		}
 
 		const setQuestionsList = async () => {
-			// const { data, error } = await supabase
-			// 	.from("questions")
-			// 	.select("*")
-			// 	.like("content", `%${listSettings.content}%`)
-			// 	.order("id", { ascending: listSettings.ascending })
-			// 	.or(
-			// 		!listSettings.questionCategoryId
-			// 			? "category_id.gte.0"
-			// 			: `category_id.eq.${listSettings.questionCategoryId}`
-			// 	)
-			// 	.range(
-			// 		listSettings.page * listSettings.limit,
-			// 		listSettings.page * listSettings.limit + listSettings.limit
-			// 	);
-
-			const { data, error } = await supabase.rpc("get_questions_with_answers", {
-				p_profile_id: user.id,
-				p_limit: listSettings.limit,
-				p_search: listSettings.content,
-			});
+			const { data, error } = await supabase.rpc(
+				"get_questions_with_answers",
+				{
+					p_profile_id: user.id,
+					p_limit: listSettings.limit,
+					p_search: listSettings.content,
+				}
+			);
 
 			if (error) {
 				console.error("Error while fetching questions!");
-				addPopup("Błąd podczas pobierania listy pytań", error.message, "error");
+				addPopup(
+					"Błąd podczas pobierania listy pytań",
+					error.message,
+					"error"
+				);
 				return;
 			}
 
@@ -90,7 +88,7 @@ export default function QuestionsList() {
 		};
 
 		setQuestionsList();
-	}, [listSettings, addPopup,user]);
+	}, [listSettings, addPopup, user]);
 
 	return (
 		<>
@@ -104,8 +102,8 @@ export default function QuestionsList() {
 							listSettings={listSettings}
 							questionsList={questionsList}
 							setListSettings={setListSettings}
-							categoriesList={categoriesList}
 							setDisplayedQuestion={setDisplayedQuestion}
+							categoriesList={categoriesList}
 						/>
 					</div>
 					<FilterQuestionsTableForm
