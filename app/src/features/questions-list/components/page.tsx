@@ -6,8 +6,8 @@ import type { Database } from "../../../types/database.types";
 import FilterQuestionsTableForm from "./filter-form";
 import QuestionModalPresentation from "./question-modal";
 import PopupContext from "../../../context/popup.context";
+import AuthContext from "../../../context/auth.context";
 
-export type questionRow = Database["public"]["Tables"]["questions"]["Row"];
 export type categoriesType = Database["public"]["Tables"]["categories"]["Row"];
 export type ListSettingsType = {
 	ascending: boolean;
@@ -18,57 +18,69 @@ export type ListSettingsType = {
 	limit: number;
 };
 
+export type questionRow =
+	Database["public"]["Functions"]["get_questions_with_answers"]["Returns"][number];
+
 export default function QuestionsList() {
 	const [questionsList, setQuestionList] = useState<questionRow[]>([]);
-	const [categoriesList, setCategoriesList] = useState<categoriesType[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [displayedQuestion, setDisplayedQuestion] =
 		useState<questionRow | null>(null);
 	const [nextPagePossible, setNextPagePossible] = useState<boolean>(false);
+	const [categoriesList, setCategoriesList] = useState<string[]>([]);
 	const [listSettings, setListSettings] = useState<ListSettingsType>({
 		ascending: true,
 		content: "",
 		questionCategoryId: 0,
 		licenseCategory: "",
-		page: 0,
+		page: 1,
 		limit: 30,
 	});
+	const { user } = useContext(AuthContext);
 
 	const { addPopup } = useContext(PopupContext);
 
 	useEffect(() => {
 		(async () => {
+			setIsLoading(true);
 			const { data, error } = await supabase
 				.from("categories")
 				.select("*");
+
+			setIsLoading(false);
 
 			if (error) {
 				return;
 			}
 
-			setCategoriesList([{ id: 0, title: "Wszystkie" }, ...data]);
+			const categoriesArr = data
+				.toSorted((a, b) => a.id - b.id)
+				.map((c) => c.title);
+
+			setCategoriesList(["Wszystkie", ...categoriesArr]);
 		})();
 	}, []);
 
 	useEffect(() => {
-		if (!addPopup) {
+		if (!addPopup || !user) {
 			return;
 		}
 
 		const setQuestionsList = async () => {
-			const { data, error } = await supabase
-				.from("questions")
-				.select("*")
-				.like("content", `%${listSettings.content}%`)
-				.order("id", { ascending: listSettings.ascending })
-				.or(
-					!listSettings.questionCategoryId
-						? "category_id.gte.0"
-						: `category_id.eq.${listSettings.questionCategoryId}`
-				)
-				.range(
-					listSettings.page * listSettings.limit,
-					listSettings.page * listSettings.limit + listSettings.limit
-				);
+			setIsLoading(true);
+			const { data, error } = await supabase.rpc(
+				"get_questions_with_answers",
+				{
+					p_profile_id: user.id,
+					p_search: listSettings.content,
+					p_page: listSettings.page,
+					p_page_size: listSettings.limit,
+					p_category_id: listSettings.questionCategoryId || undefined,
+					p_sort_dir: listSettings.ascending ? "asc" : "desc",
+				}
+			);
+
+			setIsLoading(false);
 
 			if (error) {
 				console.error("Error while fetching questions!");
@@ -86,10 +98,10 @@ export default function QuestionsList() {
 		};
 
 		setQuestionsList();
-	}, [listSettings, addPopup]);
+	}, [listSettings, addPopup, user]);
 
 	return (
-		<>
+		<div className={isLoading ? `cursor-wait` : `cursor-auto`}>
 			<div className="max-h-svh">
 				<h1 className="text-2xl text-center mt-4 uppercase mb-13">
 					Lista aktualnych pytań egzaminacyjnych
@@ -100,8 +112,9 @@ export default function QuestionsList() {
 							listSettings={listSettings}
 							questionsList={questionsList}
 							setListSettings={setListSettings}
-							categoriesList={categoriesList}
 							setDisplayedQuestion={setDisplayedQuestion}
+							categoriesList={categoriesList}
+							isLoading={isLoading}
 						/>
 					</div>
 					<FilterQuestionsTableForm
@@ -109,6 +122,7 @@ export default function QuestionsList() {
 						listSettings={listSettings}
 						categoriesList={categoriesList}
 						nextPagePossible={nextPagePossible}
+						isLoading={isLoading}
 					/>
 				</div>
 			</div>
@@ -116,6 +130,6 @@ export default function QuestionsList() {
 				question={displayedQuestion}
 				setDisplayedQuestion={setDisplayedQuestion}
 			/>
-		</>
+		</div>
 	);
 }

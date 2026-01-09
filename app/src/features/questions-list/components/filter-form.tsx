@@ -1,18 +1,23 @@
-import type { categoriesType, ListSettingsType } from "./page";
+import type { ListSettingsType } from "./page";
 
 export default function FilterQuestionsTableForm({
 	categoriesList,
 	listSettings,
 	setListSettings,
 	nextPagePossible,
+	isLoading,
 }: {
-	categoriesList: categoriesType[];
+	categoriesList: string[];
 	listSettings: ListSettingsType;
 	setListSettings: React.Dispatch<React.SetStateAction<ListSettingsType>>;
 	nextPagePossible: boolean;
+	isLoading: boolean;
 }) {
 	return (
-		<form className="flex flex-col gap-2" onSubmit={(e) => e.preventDefault()}>
+		<form
+			className="flex flex-col gap-2"
+			onSubmit={(e) => e.preventDefault()}
+		>
 			<h2 className="text-3xl uppercase text-center">Filtry</h2>
 
 			<div className="flex flex-col">
@@ -52,9 +57,9 @@ export default function FilterQuestionsTableForm({
 					id="question-category"
 					className="max-w-50  truncate"
 				>
-					{categoriesList.map((category) => (
-						<option key={category.id} value={category.id}>
-							{category.title}
+					{categoriesList.map((category, i) => (
+						<option key={category} value={i}>
+							{category}
 						</option>
 					))}
 				</select>
@@ -85,8 +90,10 @@ export default function FilterQuestionsTableForm({
 
 			<div className="flex justify-around">
 				<button
-					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
-					disabled={listSettings.page === 0}
+					className={`bg-blue-300 py-1.5 px-3 border border-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed ${
+						isLoading ? "cursor-wait" : "cursor-pointer"
+					}`}
+					disabled={listSettings.page === 1}
 					onClick={() =>
 						setListSettings((prev) => ({
 							...prev,
@@ -96,9 +103,11 @@ export default function FilterQuestionsTableForm({
 				>
 					Poprzednia
 				</button>
-				<div>{listSettings.page + 1}</div>
+				<div>{listSettings.page}</div>
 				<button
-					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+					className={`bg-blue-300 py-1.5 px-3 border border-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed ${
+						isLoading ? "cursor-wait" : "cursor-pointer"
+					}`}
 					onClick={() =>
 						setListSettings((prev) => ({
 							...prev,
