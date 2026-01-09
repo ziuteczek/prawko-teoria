@@ -8,6 +8,7 @@ export default function QuestionsListTable({
 	setListSettings,
 	setDisplayedQuestion,
 	categoriesList,
+	isLoading
 }: {
 	listSettings: ListSettingsType;
 	questionsList: questionRow[];
@@ -16,6 +17,7 @@ export default function QuestionsListTable({
 		React.SetStateAction<questionRow | null>
 	>;
 	categoriesList: string[];
+	isLoading: boolean
 }) {
 	
 	return (
@@ -31,6 +33,7 @@ export default function QuestionsListTable({
 						setDisplayedQuestion={setDisplayedQuestion}
 						questionRow={q}
 						categoriesTitle={categoriesList[q.categoryid]}
+						isLoading={isLoading}
 					/>
 				))}
 			</tbody>

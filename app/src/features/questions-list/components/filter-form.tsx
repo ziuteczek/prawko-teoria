@@ -5,11 +5,13 @@ export default function FilterQuestionsTableForm({
 	listSettings,
 	setListSettings,
 	nextPagePossible,
+	isLoading,
 }: {
 	categoriesList: string[];
 	listSettings: ListSettingsType;
 	setListSettings: React.Dispatch<React.SetStateAction<ListSettingsType>>;
 	nextPagePossible: boolean;
+	isLoading: boolean;
 }) {
 	return (
 		<form
@@ -55,7 +57,7 @@ export default function FilterQuestionsTableForm({
 					id="question-category"
 					className="max-w-50  truncate"
 				>
-					{categoriesList.map((category,i) => (
+					{categoriesList.map((category, i) => (
 						<option key={category} value={i}>
 							{category}
 						</option>
@@ -88,7 +90,9 @@ export default function FilterQuestionsTableForm({
 
 			<div className="flex justify-around">
 				<button
-					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+					className={`bg-blue-300 py-1.5 px-3 border border-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed ${
+						isLoading ? "cursor-wait" : "cursor-pointer"
+					}`}
 					disabled={listSettings.page === 1}
 					onClick={() =>
 						setListSettings((prev) => ({
@@ -101,7 +105,9 @@ export default function FilterQuestionsTableForm({
 				</button>
 				<div>{listSettings.page}</div>
 				<button
-					className="bg-blue-300 py-1.5 px-3 border border-gray-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
+					className={`bg-blue-300 py-1.5 px-3 border border-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed ${
+						isLoading ? "cursor-wait" : "cursor-pointer"
+					}`}
 					onClick={() =>
 						setListSettings((prev) => ({
 							...prev,

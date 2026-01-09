@@ -23,6 +23,7 @@ export type questionRow =
 
 export default function QuestionsList() {
 	const [questionsList, setQuestionList] = useState<questionRow[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [displayedQuestion, setDisplayedQuestion] =
 		useState<questionRow | null>(null);
 	const [nextPagePossible, setNextPagePossible] = useState<boolean>(false);
@@ -41,9 +42,12 @@ export default function QuestionsList() {
 
 	useEffect(() => {
 		(async () => {
+			setIsLoading(true);
 			const { data, error } = await supabase
 				.from("categories")
 				.select("*");
+
+			setIsLoading(false);
 
 			if (error) {
 				return;
@@ -63,6 +67,7 @@ export default function QuestionsList() {
 		}
 
 		const setQuestionsList = async () => {
+			setIsLoading(true);
 			const { data, error } = await supabase.rpc(
 				"get_questions_with_answers",
 				{
@@ -71,8 +76,11 @@ export default function QuestionsList() {
 					p_page: listSettings.page,
 					p_page_size: listSettings.limit,
 					p_category_id: listSettings.questionCategoryId || undefined,
+					p_sort_dir: listSettings.ascending ? "asc" : "desc",
 				}
 			);
+
+			setIsLoading(false);
 
 			if (error) {
 				console.error("Error while fetching questions!");
@@ -93,7 +101,7 @@ export default function QuestionsList() {
 	}, [listSettings, addPopup, user]);
 
 	return (
-		<>
+		<div className={isLoading ? `cursor-wait` : `cursor-auto`}>
 			<div className="max-h-svh">
 				<h1 className="text-2xl text-center mt-4 uppercase mb-13">
 					Lista aktualnych pytań egzaminacyjnych
@@ -106,6 +114,7 @@ export default function QuestionsList() {
 							setListSettings={setListSettings}
 							setDisplayedQuestion={setDisplayedQuestion}
 							categoriesList={categoriesList}
+							isLoading={isLoading}
 						/>
 					</div>
 					<FilterQuestionsTableForm
@@ -113,6 +122,7 @@ export default function QuestionsList() {
 						listSettings={listSettings}
 						categoriesList={categoriesList}
 						nextPagePossible={nextPagePossible}
+						isLoading={isLoading}
 					/>
 				</div>
 			</div>
@@ -120,6 +130,6 @@ export default function QuestionsList() {
 				question={displayedQuestion}
 				setDisplayedQuestion={setDisplayedQuestion}
 			/>
-		</>
+		</div>
 	);
 }

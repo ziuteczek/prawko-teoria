@@ -4,26 +4,28 @@ export default function QuestionListRow({
 	setDisplayedQuestion,
 	questionRow,
 	categoriesTitle,
+	isLoading,
 }: {
 	setDisplayedQuestion: React.Dispatch<
 		React.SetStateAction<questionRow | null>
 	>;
 	questionRow: questionRow;
 	categoriesTitle: string;
+	isLoading: boolean;
 }) {
 	const getQuestionFamiliarityStr = () => {
 		if (questionRow.correct_answer === questionRow.answer) {
 			return "Znasz";
 		} else if (questionRow.answer === null) {
 			return "nie poznałeś";
-		} else{
-			return "nie znasz"
+		} else {
+			return "nie znasz";
 		}
 	};
 
 	return (
 		<tr
-			className="bg-neutral-primary-soft border-b  border-default nth-[2n]:bg-gray-200 cursor-pointer hover:bg-stone-300 nth-[2n]:hover:bg-stone-300 transition-colors duration-50"
+			className={`bg-neutral-primary-soft border-b  border-default nth-[2n]:bg-gray-200 cursor-pointer hover:bg-stone-300 nth-[2n]:hover:bg-stone-300 transition-colors duration-50 ${isLoading ? 'cursor-wait' : 'cursor-pointer'}`}
 			onClick={() => {
 				setDisplayedQuestion(questionRow);
 			}}
