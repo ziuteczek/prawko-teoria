@@ -44,3 +44,10 @@ It includes **practice quizzes**, **lessons**, and soon **AI assistance** and **
 ```bash
 docker compose up
 ```
+
+### 2. Use testing loggin & password
+
+```
+email: test@test.com
+password: test
+```
