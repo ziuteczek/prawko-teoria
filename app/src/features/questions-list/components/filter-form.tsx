@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import type { ListSettingsType } from "./page";
+import { useSearchParams } from "react-router";
 
 export default function FilterQuestionsTableForm({
 	categoriesList,
@@ -13,11 +15,22 @@ export default function FilterQuestionsTableForm({
 	nextPagePossible: boolean;
 	isLoading: boolean;
 }) {
+	// eslint-disable-next-line
+	const [_, setSearchParams] = useSearchParams();
+
+	useEffect(() => {
+		setSearchParams({
+			content: listSettings.content,
+			licenseCategory: listSettings.licenseCategory,
+			limit: String(listSettings.limit),
+			page: String(listSettings.page),
+			ascending: String(listSettings.ascending),
+			questionCategoryId: String(listSettings.questionCategoryId),
+		});
+	}, [setSearchParams,listSettings]);
+
 	return (
-		<form
-			className="flex flex-col gap-2"
-			onSubmit={(e) => e.preventDefault()}
-		>
+		<form className="flex flex-col gap-2" onSubmit={(e) => e.preventDefault()}>
 			<h2 className="text-3xl uppercase text-center">Filtry</h2>
 
 			<div className="flex flex-col">
@@ -41,10 +54,7 @@ export default function FilterQuestionsTableForm({
 			</div>
 
 			<div className="flex flex-col">
-				<label
-					className="text-sm font-bold"
-					htmlFor="question-cateogry"
-				>
+				<label className="text-sm font-bold" htmlFor="question-cateogry">
 					Kateogria pytania
 				</label>
 				<select
@@ -66,10 +76,7 @@ export default function FilterQuestionsTableForm({
 			</div>
 
 			<div className="flex flex-col">
-				<label
-					className="text-sm font-bold"
-					htmlFor="questions-per-site"
-				>
+				<label className="text-sm font-bold" htmlFor="questions-per-site">
 					Liczba pytań na stronę
 				</label>
 				<select

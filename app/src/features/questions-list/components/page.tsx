@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import supabase from "../../../utils/supabase";
 import QuestionsListTable from "./table";
 
@@ -7,6 +7,7 @@ import FilterQuestionsTableForm from "./filter-form";
 import QuestionModalPresentation from "./question-modal";
 import PopupContext from "../../../context/popup.context";
 import AuthContext from "../../../context/auth.context";
+import { useLocation } from "react-router";
 
 export type categoriesType = Database["public"]["Tables"]["categories"]["Row"];
 export type ListSettingsType = {
@@ -28,6 +29,10 @@ export default function QuestionsList() {
 		useState<questionRow | null>(null);
 	const [nextPagePossible, setNextPagePossible] = useState<boolean>(false);
 	const [categoriesList, setCategoriesList] = useState<string[]>([]);
+
+	const location = useLocation();
+	const searchParamsRef = useRef(new URLSearchParams(location.search));
+
 	const [listSettings, setListSettings] = useState<ListSettingsType>({
 		ascending: true,
 		content: "",
@@ -41,11 +46,32 @@ export default function QuestionsList() {
 	const { addPopup } = useContext(PopupContext);
 
 	useEffect(() => {
+		const searchParams = {
+			ascending: searchParamsRef.current.get("ascending"),
+			content: searchParamsRef.current.get("content"),
+			questionCategoryId: Number(searchParamsRef.current.get("questionCategoryId")),
+			page: Number(searchParamsRef.current.get("page")),
+			limit: Number(searchParamsRef.current.get("limit")),
+		};
+
+		const NaNToUndefined = (num: number) => (isNaN(num) ? undefined : num);
+
+		const searchParamsVals = {
+			ascending: !(searchParams.ascending === "false"),
+			content: searchParams.content ?? "",
+			questionCategoryId: NaNToUndefined(searchParams.questionCategoryId) || 0,
+			page: NaNToUndefined(searchParams.page) || 1,
+			limit: NaNToUndefined(searchParams.limit) || 30,
+			licenseCategory: "",
+		};
+
+		setListSettings({ ...searchParamsVals });
+	}, []);
+
+	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			const { data, error } = await supabase
-				.from("categories")
-				.select("*");
+			const { data, error } = await supabase.from("categories").select("*");
 
 			setIsLoading(false);
 
@@ -68,27 +94,20 @@ export default function QuestionsList() {
 
 		const setQuestionsList = async () => {
 			setIsLoading(true);
-			const { data, error } = await supabase.rpc(
-				"get_questions_with_answers",
-				{
-					p_profile_id: user.id,
-					p_search: listSettings.content,
-					p_page: listSettings.page,
-					p_page_size: listSettings.limit,
-					p_category_id: listSettings.questionCategoryId || undefined,
-					p_sort_dir: listSettings.ascending ? "asc" : "desc",
-				}
-			);
+			const { data, error } = await supabase.rpc("get_questions_with_answers", {
+				p_profile_id: user.id,
+				p_search: listSettings.content,
+				p_page: listSettings.page,
+				p_page_size: listSettings.limit,
+				p_category_id: listSettings.questionCategoryId || undefined,
+				p_sort_dir: listSettings.ascending ? "asc" : "desc",
+			});
 
 			setIsLoading(false);
 
 			if (error) {
 				console.error("Error while fetching questions!");
-				addPopup(
-					"Błąd podczas pobierania listy pytań",
-					error.message,
-					"error"
-				);
+				addPopup("Błąd podczas pobierania listy pytań", error.message, "error");
 				return;
 			}
 
