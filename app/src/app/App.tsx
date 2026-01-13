@@ -3,7 +3,7 @@ import Dashboard from "../features/dashboard/components/page";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import IndexRoute from "../routes/index.route";
-import Quiz from "../features/quiz/components/Quiz";
+import Quiz from "../features/quiz/components/page";
 import { AuthProvider } from "../providers/auth.provider";
 import { PreloadProvider } from "../providers/preload.provider";
 import "../styles/global.css";
