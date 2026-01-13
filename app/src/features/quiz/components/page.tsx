@@ -30,7 +30,8 @@ export default function Quiz() {
 
 	const [quizStage, setQuizStage] = useState<QuizStage>("reading");
 
-	const { isFinished, seconds, reset, pause, resume } = useCountdown(15);
+	const { isFinished, seconds, reset, pause, resume, isPaused } =
+		useCountdown(15);
 	const { currQuestion, nextQuestion } = useQuestion(
 		user?.id || "",
 		quizCategoryID,
@@ -98,6 +99,19 @@ export default function Quiz() {
 		}
 	}, [setPreloadData]);
 
+	const quizStageToString = (quizStage: QuizStage) => {
+		switch (quizStage) {
+			case "answering":
+				return "odpowiedź";
+			case "explanation":
+				return "tłumaczenie";
+			case "reading":
+				return "zapoznanie";
+			default:
+				return "";
+		}
+	};
+
 	return (
 		<div className="p-5">
 			<div className="flex gap-5">
@@ -110,15 +124,10 @@ export default function Quiz() {
 				/>
 				<div className="flex flex-col justify-between">
 					<div>
-						<h1 className="text-xl font-extrabold">
-							{currQuestion?.content}
-						</h1>
+						<h1 className="text-xl font-extrabold">{currQuestion?.content}</h1>
 
 						<h2 className="font-extralight mt-3">Wytłumaczenie:</h2>
-						<p className="font-">
-							{quizStage === "explanation" &&
-								currQuestion?.explanation}
-						</p>
+						<p>{quizStage === "explanation" && currQuestion?.explanation}</p>
 					</div>
 
 					<div className="flex flex-col items-end">
@@ -127,12 +136,18 @@ export default function Quiz() {
 							setQuizStage={setQuizStage}
 							setSelectedAnswer={setSelectedAnswer}
 						/>
-						<p className="lowercase w-full">Czas na {quizStage}</p>
-						<Timer seconds={seconds} quizStage={quizStage} />
+						<p className="lowercase w-full">
+							Czas na {quizStageToString(quizStage)}
+						</p>
+						<Timer seconds={seconds} quizStage={quizStage} isPaused={isPaused} />
 					</div>
 				</div>
 			</div>
-			<ConfirmBtn quizStage={quizStage} setQuizStage={setQuizStage} enableBtn={!!selectedAnswer || quizStage === "explanation"} />
+			<ConfirmBtn
+				quizStage={quizStage}
+				setQuizStage={setQuizStage}
+				enableBtn={!!selectedAnswer || quizStage === "explanation"}
+			/>
 			<AnswersBtns
 				answers={currQuestion?.answers}
 				selectedAnswer={selectedAnswer}
@@ -141,7 +156,6 @@ export default function Quiz() {
 				correctAnswer={currQuestion?.correctAnswer}
 			/>
 			<AiAssistance questionId={currQuestion?.id} quizStage={quizStage} />
-			
 		</div>
 	);
 }
